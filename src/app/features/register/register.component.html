@@ -1,0 +1,215 @@
+<div class="container py-5">
+  <div class="row justify-content-center align-items-center">
+    <!-- Right Side (Form Card) -->
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <form
+            [formGroup]="registerForm"
+            (ngSubmit)="onSubmit()"
+            class="p-4 shadow rounded-4 bg-white"
+          >
+            <div class="row">
+              <!-- Left Column -->
+              <div class="col-md-6 pe-md-4">
+                <!-- First Name -->
+                <div class="mb-3">
+                  <label for="firstName" class="form-label">First Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-person-circle"></i>
+                    </span>
+                    <input
+                      type="text"
+                      id="firstName"
+                      class="form-control"
+                      formControlName="firstName"
+                      placeholder="Enter first name"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      registerForm.get('firstName')?.invalid &&
+                      registerForm.get('firstName')?.touched
+                    "
+                    class="text-danger mt-1"
+                  >
+                    <small
+                      *ngIf="registerForm.get('firstName')?.errors?.['required']"
+                    >
+                      First name is required.
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Last Name -->
+                <div class="mb-3">
+                  <label for="lastName" class="form-label">Last Name</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-person-circle"></i>
+                    </span>
+                    <input
+                      type="text"
+                      id="lastName"
+                      class="form-control"
+                      formControlName="lastName"
+                      placeholder="Enter last name"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      registerForm.get('lastName')?.invalid &&
+                      registerForm.get('lastName')?.touched
+                    "
+                    class="text-danger mt-1"
+                  >
+                    <small
+                      *ngIf="registerForm.get('lastName')?.errors?.['required']"
+                    >
+                      Last name is required.
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-envelope"></i>
+                    </span>
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      formControlName="email"
+                      placeholder="Enter email"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      registerForm.get('email')?.invalid &&
+                      registerForm.get('email')?.touched
+                    "
+                    class="text-danger mt-1"
+                  >
+                    <small
+                      *ngIf="registerForm.get('email')?.errors?.['required']"
+                      >Email is required.</small
+                    >
+                    <small *ngIf="registerForm.get('email')?.errors?.['email']"
+                      >Email must be valid.</small
+                    >
+                    <small
+                      *ngIf="registerForm.get('email')?.errors?.['pattern']"
+                      >Invalid email format.</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column -->
+              <div class="col-md-6 ps-md-4">
+                <!-- Username -->
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-person-circle"></i>
+                    </span>
+                    <input
+                      type="text"
+                      id="username"
+                      class="form-control"
+                      formControlName="username"
+                      placeholder="Enter username"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      registerForm.get('username')?.invalid &&
+                      registerForm.get('username')?.touched
+                    "
+                    class="text-danger mt-1"
+                  >
+                    <small
+                      *ngIf="registerForm.get('username')?.errors?.['required']"
+                    >
+                      Username is required.
+                    </small>
+                  </div>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-lock-fill"></i>
+                    </span>
+                    <input
+                      type="password"
+                      id="password"
+                      class="form-control"
+                      formControlName="password"
+                      placeholder="Enter password"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      registerForm.get('password')?.invalid &&
+                      registerForm.get('password')?.touched
+                    "
+                    class="text-danger mt-1"
+                  >
+                    <small
+                      *ngIf="registerForm.get('password')?.errors?.['required']"
+                    >
+                      Password is required.
+                    </small>
+                    <small
+                      *ngIf="registerForm.get('password')?.errors?.['minlength']"
+                    >
+                      Password must be at least 6 characters.
+                    </small>
+                    <small
+                      *ngIf="registerForm.get('password')?.errors?.['pattern']"
+                    >
+                      Password must include an uppercase letter, lowercase
+                      letter, number, and special character.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end mt-4 gap-2">
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                [routerLink]="['/']"
+              >
+                <i class="bi bi-x-lg me-2"></i> Cancel
+              </button>
+
+              <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="registerForm.invalid || isSubmitting"
+              >
+                <i class="bi bi-check-lg me-2"></i> Register
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
