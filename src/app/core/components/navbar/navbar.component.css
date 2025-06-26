@@ -1,0 +1,33 @@
+/* Optional: Adjust padding/margins inside the mega menu */
+.dropdown-menu {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100%;
+  max-width: 800px; /* control how wide it gets */
+  margin: 0 auto;
+  border-top: 3px solid #ffc107; /* optional highlight */
+}
+
+/* Make sure the grid inside the dropdown looks clean */
+.dropdown-menu .row {
+  width: 100%;
+}
+
+/* Optional: Style subcategory links for better UX */
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+  font-weight: 500;
+}
+
+/* Optional: Smooth dropdown animation */
+.navbar .dropdown-menu {
+  transition: all 0.3s ease;
+}
+
+/*UNCOMENT THIS IF U WANT THE MENU TO APPEAR ON HOVER*/
+/* @media (min-width: 992px) {
+  .navbar .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+} */

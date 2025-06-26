@@ -14,27 +14,45 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Left Side -->
       <ul class="navbar-nav me-auto">
-        <li class="nav-item dropdown">
+        <!-- Shop Mega Dropdown -->
+        <li class="nav-item dropdown" *ngIf="categories?.length">
           <a
             class="nav-link dropdown-toggle"
             href="#"
-            id="productsDropdown"
+            id="shopDropdown"
             role="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Products
+            Shop
           </a>
-          <ul class="dropdown-menu" aria-labelledby="productsDropdown">
-            <li><a class="dropdown-item" routerLink="/products/1">Product 1</a></li>
-            <li><a class="dropdown-item" routerLink="/products/2">Product 2</a></li>
-            <li><hr class="dropdown-divider" /></li>
-            <li><a class="dropdown-item" routerLink="/products">All Products</a></li>
+
+          <ul class="dropdown-menu p-3" aria-labelledby="shopDropdown" style="width: 600px;">
+            <div class="row">
+              <ng-container *ngFor="let category of categories; let i = index">
+                <div class="col-md-4" *ngIf="category.subcategories.length > 0">
+                  <h6 class="dropdown-header">{{ category.name }}</h6>
+                  <a
+                    *ngFor="let sub of category.subcategories"
+                    class="dropdown-item"
+                    [routerLink]="['/products']"
+                    [queryParams]="{ subcategoryId: sub.id }"
+                  >
+                    {{ sub.name }}
+                  </a>
+                </div>
+              </ng-container>
+            </div>
+
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-center fw-bold" routerLink="/products">View All Products</a>
           </ul>
         </li>
       </ul>
 
+      <!-- Right Side -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <a class="nav-link" routerLink="/register">Register</a>
@@ -46,4 +64,3 @@
     </div>
   </div>
 </nav>
-
