@@ -3,8 +3,8 @@
     <div class="col-md-4 mb-4" *ngFor="let product of products">
       <div class="card h-100">
         <!-- Product Image -->
-        <!-- <img *ngIf="product.imageBase64" [src]="product.imageBase64" class="card-img-top" alt="{{ product.name }}">
-        <img *ngIf="!product.imageBase64" src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No Image"> -->
+        <img *ngIf="product.image" [src]="product.image" class="card-img-top" alt="{{ product.name }}">
+        <!-- <img *ngIf="!product.imageBase64" src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No Image"> -->
 
         <!-- Card Body -->
         <div class="card-body d-flex flex-column">
@@ -13,7 +13,6 @@
 
           <div class="mt-auto">
             <p class="mb-1"><strong>Price:</strong> {{ product.unitPrice | currency }}</p>
-            <p class="mb-1"><strong>Quantity:</strong> {{ product.unitQuantity }}</p>
             <p class="mb-0"><strong>Category:</strong> {{ product.category }} / {{ product.subcategory }}</p>
           </div>
         </div>
