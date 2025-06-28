@@ -1,15 +1,33 @@
-  .card-img-top {
-    width: 100%;
-    height: 200px;
-    object-fit: cover; /* ensures the image covers the area without distortion */
-  }
+.card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover; /* ensures the image covers the area without distortion */
+  cursor: pointer;
+}
 
-  .card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* subtle shadow */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* subtle shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* hover effect for pop */
-  }
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* hover effect for pop */
+}
+
+.product-name-box {
+  background-color: #accff1; /* light gray */
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.product-info-box {
+  background-color: #d0e3f5; /* even lighter gray */
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
