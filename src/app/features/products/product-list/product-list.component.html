@@ -1,6 +1,6 @@
 <div class="container my-4">
   <div class="row">
-    <div class="col-md-4 mb-4" *ngFor="let product of products">
+    <div class="col-md-3 mb-4" *ngFor="let product of products">
       <div class="card h-100">
         <!-- Product Image -->
         <img *ngIf="product.image" [src]="product.image" class="card-img-top" alt="{{ product.name }}">
@@ -9,17 +9,10 @@
         <!-- Card Body -->
         <div class="card-body d-flex flex-column">
           <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text text-muted">{{ product.description }}</p>
-
           <div class="mt-auto">
             <p class="mb-1"><strong>Price:</strong> {{ product.unitPrice | currency }}</p>
             <p class="mb-0"><strong>Category:</strong> {{ product.category }} / {{ product.subcategory }}</p>
           </div>
-        </div>
-
-        <!-- Card Footer (Optional Buttons) -->
-        <div class="card-footer bg-transparent border-top-0">
-          <button class="btn btn-sm btn-primary w-100">Add to Cart</button>
         </div>
       </div>
     </div>

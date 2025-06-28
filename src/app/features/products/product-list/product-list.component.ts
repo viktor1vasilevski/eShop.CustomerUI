@@ -39,7 +39,6 @@ export class ProductListComponent {
   loadProducts() {
     this._productService.getProducts(this.productRequest).subscribe({
       next: (response: any) => {
-        debugger;
         if (response && response.success) {
           this.products = response.data;
         } else {
