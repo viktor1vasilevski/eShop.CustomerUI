@@ -15,9 +15,14 @@ export class ProductService {
       .set('subcategoryId', request.subcategoryId)
       .set('unitPrice', request.unitPrice)
       .set('skip', request.skip.toString())
-      .set('take', request.take.toString())
+      .set('take', request.take.toString());
 
     const url = `${this.baseUrl}/product`;
     return this._dataApiService.getAll<any>(url, params);
+  }
+
+  getProductById(id: string ): Observable<any> {
+    const url = `${this.baseUrl}/product/${id}`;
+    return this._dataApiService.getById<any>(url);
   }
 }

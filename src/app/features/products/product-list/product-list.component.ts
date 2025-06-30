@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { CommonModule } from '@angular/common';
 
@@ -12,7 +12,7 @@ export interface ProductRequest {
 
 @Component({
   selector: 'app-product-list',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css',
 })
@@ -49,4 +49,5 @@ export class ProductListComponent {
       },
     });
   }
+
 }

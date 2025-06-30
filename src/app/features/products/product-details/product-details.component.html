@@ -1,0 +1,52 @@
+<div class="container-fluid py-4 px-5" style="min-height: 80vh">
+  <div class="card p-4 h-100 border-0">
+    <div class="row g-4 h-100">
+      <!-- Image Section -->
+      <div class="col-lg-4 col-md-5 d-flex align-items-center h-100">
+        <div class="w-100 text-center">
+          <img
+            [src]="product.image"
+            [alt]="product.name"
+            class="img-fluid rounded mx-auto"
+            style="max-height: 70vh; object-fit: contain"
+          />
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div
+        class="col-lg-5 col-md-7 d-flex flex-column justify-content-start h-100"
+      >
+        <h2 class="fw-bold">{{ product.name }}</h2>
+        <h4 class="text-success mb-3">${{ product.unitPrice }}</h4>
+        <p>{{ product.description }}</p>
+        <p class="mb-1"><strong>Category:</strong> {{ product.category }}</p>
+        <p><strong>Subcategory:</strong> {{ product.subcategory }}</p>
+      </div>
+
+      <!-- Add to Cart -->
+      <div class="col-lg-3 col-md-12 d-flex h-100">
+        <div
+          class="card p-3 w-100 d-flex flex-column justify-content-between h-100"
+          style="background-color: #f9f9f9"
+        >
+          <div>
+            <h5 class="mb-3">Add to Cart</h5>
+            <label for="quantity" class="form-label">Quantity</label>
+            <input
+              id="quantity"
+              type="number"
+              class="form-control mb-3"
+              [(ngModel)]="quantity"
+              min="1"
+              [max]="product.unitQuantity"
+            />
+          </div>
+          <button class="btn btn-primary w-100" (click)="addToCart()">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
