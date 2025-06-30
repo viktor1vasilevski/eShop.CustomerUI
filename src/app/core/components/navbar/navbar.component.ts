@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class NavbarComponent implements OnInit {
   categories: any[] = [];
+  basketItemCount: number = 1;
   constructor(private _categoryService: CategoryService) {}
 
   ngOnInit(): void {

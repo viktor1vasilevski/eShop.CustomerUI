@@ -29,7 +29,11 @@
             Shop
           </a>
 
-          <ul class="dropdown-menu p-3" aria-labelledby="shopDropdown" style="width: 600px;">
+          <ul
+            class="dropdown-menu p-3"
+            aria-labelledby="shopDropdown"
+            style="width: 600px"
+          >
             <div class="row">
               <ng-container *ngFor="let category of categories; let i = index">
                 <div class="col-md-4" *ngIf="category.subcategories.length > 0">
@@ -47,13 +51,30 @@
             </div>
 
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-center fw-bold" routerLink="/products">View All Products</a>
+            <a class="dropdown-item text-center fw-bold" routerLink="/products"
+              >View All Products</a
+            >
           </ul>
         </li>
       </ul>
 
       <!-- Right Side -->
       <ul class="navbar-nav ms-auto">
+        <!-- Basket Icon -->
+        <li class="nav-item me-3">
+          <a class="nav-link position-relative text-white" routerLink="/basket">
+            <i class="bi bi-cart" style="font-size: 1.2rem"></i>
+            <span
+              *ngIf="basketItemCount > 0"
+              class="position-absolute badge rounded-pill bg-danger"
+              style="top: -0.25rem; right: -0.5rem; font-size: 0.7rem"
+            >
+              {{ basketItemCount }}
+            </span>
+          </a>
+        </li>
+
+        <!-- Register / Login Links -->
         <li class="nav-item">
           <a class="nav-link" routerLink="/register">Register</a>
         </li>
