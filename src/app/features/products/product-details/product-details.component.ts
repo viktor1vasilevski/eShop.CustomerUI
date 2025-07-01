@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { FormsModule } from '@angular/forms';
+import { StorageService } from '../../../core/services/storage.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
+import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-product-details',
@@ -16,7 +20,11 @@ export class ProductDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private _productService: ProductService
+    private _productService: ProductService,
+    private _storageService: StorageService,
+    private _notificationService: NotificationService,
+    private _errorHandlerService: ErrorHandlerService,
+    private _cartService: CartService
   ) {
     this.route.params.subscribe((params) => {
       this.productId = params['id'];
@@ -43,9 +51,28 @@ export class ProductDetailsComponent implements OnInit {
       alert('Invalid quantity');
       return;
     }
-    // Your add to cart logic here
-    console.log(
-      `Adding ${this.quantity} units of ${this.product.name} to cart`
-    );
+
+    const cartItem = {
+      productId: this.product.id,
+      name: this.product.name,
+      price: this.product.price,
+      quantity: this.quantity,
+    };
+
+    if (this._storageService.isAuthenticated()) {
+      // Logged-in user: call API
+      this._cartService.addItemToServerCart(cartItem).subscribe({
+        next: () => {
+          this._notificationService.success('Item added to your cart.');
+        },
+        error: (err) => {
+          this._errorHandlerService.handleErrors(err);
+        },
+      });
+    } else {
+      // Guest user: store in localStorage
+      this._cartService.addItemToGuestCart(cartItem);
+      this._notificationService.success('Item added to your temporary cart.');
+    }
   }
 }

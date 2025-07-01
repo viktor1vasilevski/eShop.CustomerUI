@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-basket',
@@ -8,19 +10,28 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './basket.component.html',
   styleUrl: './basket.component.css',
 })
-export class BasketComponent implements OnInit {
-basketItems = [
-  { id: 1, name: 'Wireless Mouse', unitPrice: 29.99, quantity: 2 },
-  { id: 2, name: 'Bluetooth Keyboard', unitPrice: 59.99, quantity: 1 },
-  { id: 3, name: 'HD Monitor', unitPrice: 199.99, quantity: 1 }
-];
-
+export class BasketComponent implements OnInit, OnDestroy {
+  basketItems: any[] = [];
   totalPrice: number = 0;
 
+  private subscription?: Subscription;
+
+  constructor(private cartService: CartService) {}
+
   ngOnInit() {
-    // Load basket items, e.g., from localStorage or a service
-    //this.loadBasket();
-    //this.calculateTotal();
+    // Subscribe to cart changes
+    this.subscription = this.cartService.cartChanges$.subscribe((cart) => {
+      this.basketItems = cart;
+      this.calculateTotal();
+    });
+
+    // Load initially
+    this.basketItems = this.cartService.getGuestCart();
+    this.calculateTotal();
+  }
+
+  ngOnDestroy() {
+    this.subscription?.unsubscribe();
   }
 
   loadBasket() {

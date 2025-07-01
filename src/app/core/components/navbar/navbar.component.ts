@@ -6,6 +6,7 @@ import { StorageService } from '../../services/storage.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -16,30 +17,37 @@ import { Subscription } from 'rxjs';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   categories: any[] = [];
-  basketItemCount: number = 1;
+  basketItemCount: number = 0;
   userEmail: string | null = null;
   private authSubscription!: Subscription;
+  private subscription?: Subscription;
 
   constructor(
     private _categoryService: CategoryService,
     private _storageService: StorageService,
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private cartService: CartService
   ) {}
 
   ngOnDestroy(): void {
     this.authSubscription.unsubscribe();
+    this.subscription?.unsubscribe();
   }
 
   ngOnInit(): void {
     this.loadCategoriesWithSubcategoriesForMenu();
     this.authSubscription = this._storageService.authChanges$.subscribe(
       (auth) => {
-        debugger
         this.userEmail = auth?.email ?? null;
       }
     );
+
+    this.subscription = this.cartService.cartChanges$.subscribe((cart) => {
+      // Calculate total quantity of all items
+      this.basketItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    });
   }
 
   loadCategoriesWithSubcategoriesForMenu(): void {
@@ -59,9 +67,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    debugger
     this._storageService.clearAuth();
-    debugger
     this.router.navigate(['/home']);
   }
 }

@@ -12,6 +12,7 @@ import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { StorageService } from '../../core/services/storage.service';
 import { Router } from '@angular/router';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,8 @@ export class LoginComponent {
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
     private _storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private _cartService: CartService
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -55,7 +57,6 @@ export class LoginComponent {
       next: (response: any) => {
         if (response && response.success && response.data) {
           this._notificationService.success(response.message);
-          debugger
           // Store user + token
           this._storageService.setAuth({
             id: response.data.id,
@@ -63,6 +64,15 @@ export class LoginComponent {
             email: response.data.email,
             token: response.data.token,
           });
+
+          if (false) {
+            const guestCart = this._cartService.getGuestCart();
+            this._cartService
+              .mergeGuestCartToBackend(guestCart)
+              .subscribe(() => {
+                this.router.navigate(['/home']);
+              });
+          }
 
           // Optional: redirect or do something next
           this.router.navigate(['/home']);
