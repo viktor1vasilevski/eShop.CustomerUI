@@ -19,10 +19,7 @@ export class AuthService {
   }
 
   register(request: any) {
-    return this.http.post<any>(
-      `${this.baseUrl}/auth/register`,
-      request
-    );
+    return this.http.post<any>(`${this.baseUrl}/auth/register`, request);
   }
 
   logout() {

@@ -101,9 +101,6 @@
                       *ngIf="registerForm.get('email')?.errors?.['required']"
                       >Email is required.</small
                     >
-                    <small *ngIf="registerForm.get('email')?.errors?.['email']"
-                      >Email must be valid.</small
-                    >
                     <small
                       *ngIf="registerForm.get('email')?.errors?.['pattern']"
                       >Invalid email format.</small
@@ -172,11 +169,6 @@
                       *ngIf="registerForm.get('password')?.errors?.['required']"
                     >
                       Password is required.
-                    </small>
-                    <small
-                      *ngIf="registerForm.get('password')?.errors?.['minlength']"
-                    >
-                      Password must be at least 6 characters.
                     </small>
                     <small
                       *ngIf="registerForm.get('password')?.errors?.['pattern']"

@@ -59,7 +59,7 @@
       </ul>
 
       <!-- Right Side -->
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto align-items-center">
         <!-- Basket Icon -->
         <li class="nav-item me-3">
           <a class="nav-link position-relative text-white" routerLink="/basket">
@@ -74,13 +74,30 @@
           </a>
         </li>
 
-        <!-- Register / Login Links -->
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/register">Register</a>
+        <!-- User Email if logged in -->
+        <li
+          *ngIf="userEmail"
+          class="nav-item nav-link disabled text-light me-3"
+          style="cursor: default"
+          title="Logged in user email"
+        >
+          Logged in as: {{ userEmail }}
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/login">Login</a>
+
+        <!-- Logout link if logged in -->
+        <li *ngIf="userEmail" class="nav-item">
+          <a class="nav-link" href="#" (click)="logout()">Logout</a>
         </li>
+
+        <!-- Register / Login Links if NOT logged in -->
+        <ng-container *ngIf="!userEmail">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register">Register</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login">Login</a>
+          </li>
+        </ng-container>
       </ul>
     </div>
   </div>

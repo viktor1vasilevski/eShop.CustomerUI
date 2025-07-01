@@ -8,6 +8,8 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
+import { ErrorHandlerService } from '../../core/services/error-handler.service';
 
 @Component({
   selector: 'app-register',
@@ -25,9 +27,9 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private _authService: AuthService,
-    private router: Router //private _notificationService: NotificationService, //private _errorHandlerService: ErrorHandlerService,
-  ) //private _authService: AuthService // assumed service to register
-  {
+    private _notificationService: NotificationService,
+    private _errorHandlerService: ErrorHandlerService //private _authService: AuthService // assumed service to register
+  ) {
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
@@ -42,19 +44,18 @@ export class RegisterComponent {
 
   onSubmit() {
     if (!this.registerForm.valid) {
-      //this._notificationService.info('Invalid form');
+      this._notificationService.error('Invalid form');
+      this.isSubmitting = false;
       return;
     }
     this.isSubmitting = true;
     this._authService.register(this.registerForm.value).subscribe({
       next: (response: any) => {
         console.log(response);
-        
       },
       error: (errorResponse: any) => {
         console.log(errorResponse);
-        
-      }
-    })
+      },
+    });
   }
 }
