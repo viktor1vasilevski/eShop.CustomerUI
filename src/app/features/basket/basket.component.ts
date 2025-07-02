@@ -3,10 +3,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CartService } from '../../core/services/cart.service';
+import { StorageService } from '../../core/services/storage.service';
+import { Router, RouterLink } from '@angular/router';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-basket',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './basket.component.html',
   styleUrl: './basket.component.css',
 })
@@ -16,7 +19,11 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   private subscription?: Subscription;
 
-  constructor(private _cartService: CartService) {}
+  constructor(
+    private _cartService: CartService,
+    private _storageService: StorageService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     debugger;
@@ -46,9 +53,30 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   onCheckout(): void {
-    // For now, this could navigate to checkout or trigger a modal, etc.
-    console.log('Proceeding to checkout...');
-    // You might use a router:
-    // this.router.navigate(['/checkout']);
+    let isAuthenticated = this._storageService.isAuthenticated();
+
+    if (!isAuthenticated) {
+      const modalElement = document.getElementById('loginModal');
+      if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+      }
+      return;
+    }
+  }
+
+  goToLogin(event: Event) {
+    event.preventDefault();
+    const modalElement = document.getElementById('loginModal');
+    if (modalElement) {
+      const modal =
+        bootstrap.Modal.getInstance(modalElement) ||
+        new bootstrap.Modal(modalElement);
+      modal.hide();
+    }
+
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 300);
   }
 }
