@@ -55,6 +55,12 @@ export class CartService {
     this.cartSubject.next(cart);
   }
 
+  removeItemFromGuestCart(productId: number): void {
+  const currentCart = this.getGuestCart();
+  const updatedCart = currentCart.filter(item => item.productId !== productId);
+  this.saveGuestCart(updatedCart);
+}
+
   // Clear guest cart and notify subscribers
   clearGuestCart(): void {
     localStorage.removeItem(this.GUEST_CART_KEY);

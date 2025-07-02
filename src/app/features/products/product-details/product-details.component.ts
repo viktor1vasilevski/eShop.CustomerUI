@@ -51,12 +51,13 @@ export class ProductDetailsComponent implements OnInit {
       alert('Invalid quantity');
       return;
     }
-
     const cartItem = {
       productId: this.product.id,
       name: this.product.name,
-      price: this.product.price,
+      price: this.product.unitPrice,
       quantity: this.quantity,
+      unitQuantity: this.product.unitQuantity,
+      image: this.product.image
     };
 
     if (this._storageService.isAuthenticated()) {

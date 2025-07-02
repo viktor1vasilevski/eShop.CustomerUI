@@ -16,60 +16,39 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   private subscription?: Subscription;
 
-  constructor(private cartService: CartService) {}
+  constructor(private _cartService: CartService) {}
 
   ngOnInit() {
-    // Subscribe to cart changes
-    this.subscription = this.cartService.cartChanges$.subscribe((cart) => {
+    debugger;
+    this.subscription = this._cartService.cartChanges$.subscribe((cart) => {
       this.basketItems = cart;
       this.calculateTotal();
     });
-
-    // Load initially
-    this.basketItems = this.cartService.getGuestCart();
-    this.calculateTotal();
   }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
   }
 
-  loadBasket() {
-    // Example: load from localStorage (adjust as needed)
-    const stored = localStorage.getItem('basket');
-    this.basketItems = stored ? JSON.parse(stored) : [];
-
-    // Optional: validate quantities or products here
-  }
-
-  saveBasket() {
-    localStorage.setItem('basket', JSON.stringify(this.basketItems));
+  clearBasket(): void {
+    this._cartService.clearGuestCart();
   }
 
   calculateTotal() {
     this.totalPrice = this.basketItems.reduce(
-      (sum: any, item: any) => sum + item.product.unitPrice * item.quantity,
+      (sum: any, item: any) => sum + item.price * item.quantity,
       0
     );
   }
 
-  updateQuantity(item: any) {
-    if (item.quantity < 1) item.quantity = 1;
-    if (item.quantity > item.product.unitQuantity) {
-      item.quantity = item.product.unitQuantity;
-    }
-    this.saveBasket();
-    this.calculateTotal();
+  removeItem(item: any): void {
+    this._cartService.removeItemFromGuestCart(item.productId);
   }
 
-  removeItem(item: any) {
-    this.basketItems = this.basketItems.filter((i: any) => i !== item);
-    this.saveBasket();
-    this.calculateTotal();
-  }
-
-  checkout() {
-    // TODO: Implement checkout logic (e.g., navigate to checkout page)
-    alert('Proceeding to checkout...');
+  onCheckout(): void {
+    // For now, this could navigate to checkout or trigger a modal, etc.
+    console.log('Proceeding to checkout...');
+    // You might use a router:
+    // this.router.navigate(['/checkout']);
   }
 }
