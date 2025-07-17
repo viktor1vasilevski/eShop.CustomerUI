@@ -7,10 +7,11 @@ import { BasketComponent } from './features/basket/basket.component';
 import { HomeComponent } from './features/home/home.component';
 
 export const routes: Routes = [
+  { path: 'home', component: HomeComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'products', component: ProductListComponent },
   { path: 'products/:id', component: ProductDetailsComponent },
   { path: 'basket', component: BasketComponent },
-  { path: 'home', component: HomeComponent },
 ];

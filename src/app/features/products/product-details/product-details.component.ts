@@ -51,6 +51,10 @@ export class ProductDetailsComponent implements OnInit {
       alert('Invalid quantity');
       return;
     }
+
+
+    debugger
+
     const cartItem = {
       productId: this.product.id,
       name: this.product.name,
@@ -73,7 +77,6 @@ export class ProductDetailsComponent implements OnInit {
     } else {
       // Guest user: store in localStorage
       this._cartService.addItemToGuestCart(cartItem);
-      this._notificationService.success('Item added to your temporary cart.');
     }
   }
 }

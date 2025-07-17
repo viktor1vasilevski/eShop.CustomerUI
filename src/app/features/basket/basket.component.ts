@@ -4,12 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CartService } from '../../core/services/cart.service';
 import { StorageService } from '../../core/services/storage.service';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-basket',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './basket.component.html',
   styleUrl: './basket.component.css',
 })
@@ -42,6 +42,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   calculateTotal() {
+    debugger;
     this.totalPrice = this.basketItems.reduce(
       (sum: any, item: any) => sum + item.price * item.quantity,
       0
@@ -50,6 +51,44 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   removeItem(item: any): void {
     this._cartService.removeItemFromGuestCart(item.productId);
+  }
+
+  updateQuantity(item: any, change: number): void {
+    debugger;
+    const newQuantity = item.quantity + change;
+
+    // Validate quantity boundaries
+    if (newQuantity < 1) {
+      return;
+    }
+    if (newQuantity > item.unitQuantity) {
+      return;
+    }
+
+    if (this._storageService.isAuthenticated()) {
+      // Logged-in user: update server cart
+      // this._cartService.updateServerCartItemQuantity(item.productId, newQuantity).subscribe({
+      //   next: () => {
+      //     item.quantity = newQuantity;
+      //     this._notificationService.success('Cart updated.');
+      //   },
+      //   error: (err) => {
+      //     this._errorHandlerService.handleErrors(err);
+      //   }
+      // });
+    } else {
+      // Guest user: update localStorage cart
+      debugger;
+      const currentCart = this._cartService.getGuestCart();
+      const existing = currentCart.find((i) => i.productId === item.productId);
+      if (existing) {
+        this._cartService.updateGuestCartItemQuantity(
+          item.productId,
+          newQuantity
+        );
+        item.quantity = newQuantity;
+      }
+    }
   }
 
   onCheckout(): void {

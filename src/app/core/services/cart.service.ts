@@ -33,14 +33,29 @@ export class CartService {
   addItemToGuestCart(item: any): void {
     const currentCart = this.getGuestCart();
     const existing = currentCart.find((i) => i.productId === item.productId);
+    debugger;
 
     if (existing) {
+      if (existing.quantity >= existing.unitQuantity) {
+        existing.quantit = existing.unitQuantity;
+        return;
+      }
       existing.quantity += item.quantity;
     } else {
       currentCart.push(item);
     }
 
     this.saveGuestCart(currentCart);
+  }
+
+  updateGuestCartItemQuantity(productId: number, quantity: number): void {
+    const currentCart = this.getGuestCart();
+    const existing = currentCart.find((i) => i.productId === productId);
+
+    if (existing) {
+      existing.quantity = quantity;
+      this.saveGuestCart(currentCart);
+    }
   }
 
   // Get guest cart from localStorage
@@ -56,10 +71,12 @@ export class CartService {
   }
 
   removeItemFromGuestCart(productId: number): void {
-  const currentCart = this.getGuestCart();
-  const updatedCart = currentCart.filter(item => item.productId !== productId);
-  this.saveGuestCart(updatedCart);
-}
+    const currentCart = this.getGuestCart();
+    const updatedCart = currentCart.filter(
+      (item) => item.productId !== productId
+    );
+    this.saveGuestCart(updatedCart);
+  }
 
   // Clear guest cart and notify subscribers
   clearGuestCart(): void {
