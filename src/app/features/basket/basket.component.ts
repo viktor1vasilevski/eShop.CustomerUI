@@ -92,9 +92,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   onCheckout(): void {
-    let isAuthenticated = this._storageService.isAuthenticated();
-
-    if (!isAuthenticated) {
+    if (!this._storageService.isAuthenticated()) {
       const modalElement = document.getElementById('loginModal');
       if (modalElement) {
         const modal = new bootstrap.Modal(modalElement);
@@ -115,7 +113,7 @@ export class BasketComponent implements OnInit, OnDestroy {
     }
 
     setTimeout(() => {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'], { queryParams: { fromModal: true } });
     }, 300);
   }
 }

@@ -11,8 +11,9 @@ import { AuthService } from '../../core/services/auth.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { StorageService } from '../../core/services/storage.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-login',
@@ -26,8 +27,11 @@ export class LoginComponent {
   passwordPattern =
     '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{4,}$';
 
+  fromModal = false;
+
   constructor(
     private fb: FormBuilder,
+    private route: ActivatedRoute,
     private _authService: AuthService,
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
@@ -42,6 +46,11 @@ export class LoginComponent {
         [Validators.required, Validators.pattern(this.passwordPattern)],
       ],
     });
+
+    this.route.queryParams.subscribe((params) => {
+      debugger;
+      this.fromModal = params['fromModal'] === 'true';
+    });
   }
 
   onSubmit(): void {
@@ -52,12 +61,12 @@ export class LoginComponent {
       this.isSubmitting = false;
       return;
     }
-
+    debugger;
     this._authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
-        if (response && response.success && response.data) {
+        if (response?.success && response?.data) {
           this._notificationService.success(response.message);
-          // Store user + token
+
           this._storageService.setAuth({
             id: response.data.id,
             name: response.data.name,
@@ -65,17 +74,37 @@ export class LoginComponent {
             token: response.data.token,
           });
 
-          if (false) {
-            const guestCart = this._cartService.getGuestCart();
-            this._cartService
-              .mergeGuestCartToBackend(guestCart)
-              .subscribe(() => {
-                this.router.navigate(['/home']);
-              });
-          }
+          const afterLogin = () => {
+            debugger;
+            if (this.fromModal) {
+              debugger;
+              // Close the lo gin modal
+              const modalElement = document.getElementById('loginModal');
+              if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal?.hide();
+              }
 
-          // Optional: redirect or do something next
-          this.router.navigate(['/home']);
+              // Optionally navigate somewhere (e.g., stay on page or go back to basket)
+              // this.router.navigate(['/basket']); // uncomment if desired
+            } else {
+              this.router.navigate(['/home']);
+            }
+          };
+
+          const guestCart = this._cartService.getGuestCart();
+          const userId = this._storageService.getUserId();
+
+          const cart = guestCart.map((item: any) => ({
+            productId: item.productId,
+            quantity: item.quantity
+          }));
+
+          this._cartService
+            .mergeGuestCartToBackend(userId, cart)
+            .subscribe({
+              complete: afterLogin,
+            });
         } else {
           this._notificationService.error(response.message);
           this.isSubmitting = false;

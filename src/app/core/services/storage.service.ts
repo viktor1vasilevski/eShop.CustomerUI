@@ -48,6 +48,11 @@ export class StorageService {
     return auth ? auth.token : null;
   }
 
+  getUserId(): string | null {
+    const auth = this.getAuth();
+    return auth ? auth.id : null;
+  }
+
   // Remove auth data (on logout)
   clearAuth(): void {
     localStorage.removeItem(this.AUTH_KEY);

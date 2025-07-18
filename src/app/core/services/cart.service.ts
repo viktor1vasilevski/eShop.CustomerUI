@@ -22,10 +22,10 @@ export class CartService {
   }
 
   // Merge guest cart into backend cart
-  mergeGuestCartToBackend(cartItems: any[]): Observable<any> {
+  mergeGuestCartToBackend(userId: string | null, cartItems: any[]): Observable<any> {
     if (!cartItems || cartItems.length === 0) return of(null);
 
-    const url = `${this.baseUrl}/cart/merge`;
+    const url = `${this.baseUrl}/basket/merge/${userId}`;
     return this._dataApiService.post<any>(url, cartItems);
   }
 
