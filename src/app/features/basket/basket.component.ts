@@ -2,9 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { StorageService } from '../../core/services/storage.service';
+
 import { Router } from '@angular/router';
-import { BasketService } from '../../core/services/basket.service';
 declare var bootstrap: any;
 
 @Component({
@@ -20,16 +19,11 @@ export class BasketComponent implements OnInit, OnDestroy {
   private subscription?: Subscription;
 
   constructor(
-    private _basketService: BasketService,
-    private _storageService: StorageService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.subscription = this._basketService.basketChanges$.subscribe((cart) => {
-      this.basketItems = cart;
-      this.calculateTotal();
-    });
+
   }
 
   ngOnDestroy() {
@@ -37,7 +31,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   clearBasket(): void {
-    this._basketService.clearGuestBasket();
+    
   }
 
   calculateTotal() {
@@ -48,7 +42,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   removeItem(item: any): void {
-    this._basketService.removeItemFromGuestBasket(item.productId);
+    
   }
 
   updateQuantity(item: any, change: number): void {
@@ -62,40 +56,10 @@ export class BasketComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this._storageService.isAuthenticated()) {
-      // Logged-in user: update server cart
-      // this._cartService.updateServerCartItemQuantity(item.productId, newQuantity).subscribe({
-      //   next: () => {
-      //     item.quantity = newQuantity;
-      //     this._notificationService.success('Cart updated.');
-      //   },
-      //   error: (err) => {
-      //     this._errorHandlerService.handleErrors(err);
-      //   }
-      // });
-    } else {
-      // Guest user: update localStorage cart
-      const currentCart = this._basketService.getGuestBasket();
-      const existing = currentCart.find((i) => i.productId === item.productId);
-      if (existing) {
-        this._basketService.updateGuestBasketItemQuantity(
-          item.productId,
-          newQuantity
-        );
-        item.quantity = newQuantity;
-      }
-    }
   }
 
   onCheckout(): void {
-    if (!this._storageService.isAuthenticated()) {
-      const modalElement = document.getElementById('loginModal');
-      if (modalElement) {
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-      }
-      return;
-    }
+
   }
 
   goToLogin(event: Event) {

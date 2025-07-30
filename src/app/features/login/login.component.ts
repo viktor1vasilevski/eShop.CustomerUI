@@ -10,9 +10,9 @@ import {
 import { AuthService } from '../../core/services/auth.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { StorageService } from '../../core/services/storage.service';
+
 import { ActivatedRoute, Router } from '@angular/router';
-import { BasketService } from '../../core/services/basket.service';
+
 declare var bootstrap: any;
 
 @Component({
@@ -35,9 +35,9 @@ export class LoginComponent {
     private _authService: AuthService,
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
-    private _storageService: StorageService,
+
     private router: Router,
-    private _basketService: BasketService
+
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -66,12 +66,7 @@ export class LoginComponent {
       next: (response: any) => {
 
         this._notificationService.success(response.message);
-        this._storageService.setAuth({
-          id: response.data.id,
-          name: response.data.name,
-          email: response.data.email,
-          token: response.data.token,
-        });
+
 
         const afterLogin = () => {
 
@@ -86,18 +81,6 @@ export class LoginComponent {
           }
         };
 
-        const guestBasket = this._basketService.getGuestBasket();
-        const userId = this._storageService.getUserId();
-
-        const cart = guestBasket.map((item: any) => ({
-          productId: item.productId,
-          quantity: item.quantity,
-        }));
-
-        this._basketService.mergeGuestBasketToBackend(userId, cart).subscribe({
-          complete: afterLogin,
-        });
-        this.isSubmitting = false;
       },
       error: (errorResponse: any) => {
         this.isSubmitting = false;

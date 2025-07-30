@@ -2,11 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CategoryService } from '../../services/category.service';
 import { CommonModule } from '@angular/common';
-import { StorageService } from '../../services/storage.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
-import { BasketService } from '../../services/basket.service';
 
 @Component({
   selector: 'app-navbar',
@@ -24,11 +22,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private _categoryService: CategoryService,
-    private _storageService: StorageService,
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
     private router: Router,
-    private _basketService: BasketService
   ) {}
 
   ngOnDestroy(): void {
@@ -38,16 +34,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadCategoriesWithSubcategoriesForMenu();
-    this.authSubscription = this._storageService.authChanges$.subscribe(
-      (auth) => {
-        this.userEmail = auth?.email ?? null;
-      }
-    );
 
-    this.subscription = this._basketService.basketChanges$.subscribe((basket) => {
-      // Calculate total quantity of all items
-      this.basketItemCount = basket.reduce((sum, item) => sum + item.quantity, 0);
-    });
+
   }
 
   loadCategoriesWithSubcategoriesForMenu(): void {
@@ -62,12 +50,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   getUserEmail(): void {
-    const auth = this._storageService.getAuth();
-    this.userEmail = auth?.email ?? null;
+    //const auth = this._storageService.getAuth();
+    //this.userEmail = auth?.email ?? null;
   }
 
   logout() {
-    this._storageService.clearAuth();
-    this.router.navigate(['/home']);
+    //this._storageService.clearAuth();
+    //this.router.navigate(['/home']);
   }
 }
