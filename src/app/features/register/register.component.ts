@@ -44,7 +44,6 @@ export class RegisterComponent {
 
   onSubmit() {
     if (!this.registerForm.valid) {
-      this._notificationService.error('Invalid form');
       this.isSubmitting = false;
       return;
     }
