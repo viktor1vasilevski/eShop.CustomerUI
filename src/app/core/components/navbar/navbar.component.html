@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">MyApp</a>
+
     <button
       class="navbar-toggler"
       type="button"
@@ -16,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <!-- Left Side -->
       <ul class="navbar-nav me-auto">
-        <!-- Shop Mega Dropdown -->
+        <!-- Shop Dropdown -->
         <li class="nav-item dropdown" *ngIf="categories?.length">
           <a
             class="nav-link dropdown-toggle"
@@ -28,14 +29,13 @@
           >
             Shop
           </a>
-
           <ul
             class="dropdown-menu p-3"
             aria-labelledby="shopDropdown"
             style="width: 600px"
           >
             <div class="row">
-              <ng-container *ngFor="let category of categories; let i = index">
+              <ng-container *ngFor="let category of categories">
                 <div class="col-md-4" *ngIf="category.subcategories.length > 0">
                   <h6 class="dropdown-header">{{ category.name }}</h6>
                   <a
@@ -49,18 +49,41 @@
                 </div>
               </ng-container>
             </div>
-
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-center fw-bold" routerLink="/products"
-              >View All Products</a
-            >
+            <a class="dropdown-item text-center fw-bold" routerLink="/products">
+              View All Products
+            </a>
           </ul>
+        </li>
+
+        <!-- 🛒 Basket Icon here so it's on the left, but not too far -->
+        <li class="nav-item ms-3">
+          <a class="nav-link position-relative text-white" routerLink="/basket">
+            <i class="bi bi-cart" style="font-size: 1.2rem"></i>
+            <span
+              *ngIf="basketItemCount > 0"
+              class="position-absolute badge rounded-pill bg-danger"
+              style="top: -0.25rem; right: -0.5rem; font-size: 0.7rem"
+            >
+              {{ basketItemCount }}
+            </span>
+          </a>
         </li>
       </ul>
 
-      <!-- Right Side -->
+      <!-- Right Side: ms-auto pushes everything to the right -->
       <ul class="navbar-nav ms-auto align-items-center">
-        <!-- Basket Icon -->
+        <!-- 1. User Email -->
+        <li
+          *ngIf="userEmail"
+          class="nav-item nav-link disabled text-light me-3"
+          style="cursor: default"
+          title="Logged in user email"
+        >
+          Logged in as: {{ userEmail }}
+        </li>
+
+        <!-- 2. Basket Icon -->
         <li class="nav-item me-3">
           <a class="nav-link position-relative text-white" routerLink="/basket">
             <i class="bi bi-cart" style="font-size: 1.2rem"></i>
@@ -74,22 +97,12 @@
           </a>
         </li>
 
-        <!-- User Email if logged in -->
-        <li
-          *ngIf="userEmail"
-          class="nav-item nav-link disabled text-light me-3"
-          style="cursor: default"
-          title="Logged in user email"
-        >
-          Logged in as: {{ userEmail }}
-        </li>
-
-        <!-- Logout link if logged in -->
+        <!-- 3. Logout link -->
         <li *ngIf="userEmail" class="nav-item">
           <a class="nav-link" (click)="logout()">Logout</a>
         </li>
 
-        <!-- Register / Login Links if NOT logged in -->
+        <!-- Register / Login if not logged in -->
         <ng-container *ngIf="!userEmail">
           <li class="nav-item">
             <a class="nav-link" routerLink="/register">Register</a>
