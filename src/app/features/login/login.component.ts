@@ -62,7 +62,7 @@ export class LoginComponent {
     this._authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
         console.log(response);
-        this._notificationService.notify(response.notificationType, response.messsage);
+        this._notificationService.notify(response.notificationType, response.message);
         this._authService.saveUser(response.data);
         this.router.navigate(['/home']);
       },
