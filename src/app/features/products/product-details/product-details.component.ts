@@ -39,19 +39,15 @@ export class ProductDetailsComponent implements OnInit {
         this.product = response.data;
       },
       error: (errorResponse: any) => {
-        console.log(errorResponse);
+        this._errorHandlerService.handleErrors(errorResponse);
       },
     });
   }
 
-  addToCart() {
+  addToBasket() {
     if (this.quantity < 1 || this.quantity > this.product.unitQuantity) {
-      alert('Invalid quantity');
       return;
     }
-
-
-
 
     const basketItem = {
       productId: this.product.id,
@@ -61,5 +57,8 @@ export class ProductDetailsComponent implements OnInit {
       unitQuantity: this.product.unitQuantity,
       image: this.product.image
     };
+
+    console.log(basketItem);
+    
   }
 }

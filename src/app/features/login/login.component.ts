@@ -60,7 +60,12 @@ export class LoginComponent {
     }
 
     this._authService.login(this.loginForm.value).subscribe({
-      next: (response: any) => {},
+      next: (response: any) => {
+        console.log(response);
+        this._notificationService.notify(response.notificationType, response.messsage);
+        this._authService.saveUser(response.data);
+        this.router.navigate(['/home']);
+      },
       error: (errorResponse: any) => {
         this.isSubmitting = false;
         this._errorHandlerService.handleErrors(errorResponse);
