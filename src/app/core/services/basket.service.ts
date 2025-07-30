@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DataService } from './data.service';
@@ -6,23 +5,25 @@ import { DataService } from './data.service';
 @Injectable({
   providedIn: 'root',
 })
-export class CartService {
+export class BasketService {
   private baseUrl = 'https://localhost:7106/api';
-  private readonly GUEST_CART_KEY = 'guest_cart';
+  private readonly GUEST_BASKET_KEY = 'guest_basket';
 
-  // BehaviorSubject to hold cart state reactively
-  private cartSubject = new BehaviorSubject<any[]>(this.getGuestCart());
-  cartChanges$ = this.cartSubject.asObservable();
+  private basketSubject = new BehaviorSubject<any[]>(this.getGuestBasket());
+  basketChanges$ = this.basketSubject.asObservable();
 
   constructor(private _dataApiService: DataService) {}
 
   // Add item to backend cart API
-  addItemToServerCart(item: any): Observable<any> {
+  addItemToServerBasket(item: any): Observable<any> {
     return this._dataApiService.post('/api/cart', item);
   }
 
   // Merge guest cart into backend cart
-  mergeGuestCartToBackend(userId: string | null, cartItems: any[]): Observable<any> {
+  mergeGuestBasketToBackend(
+    userId: string | null,
+    cartItems: any[]
+  ): Observable<any> {
     if (!cartItems || cartItems.length === 0) return of(null);
 
     const url = `${this.baseUrl}/basket/merge/${userId}`;
@@ -30,8 +31,8 @@ export class CartService {
   }
 
   // Add item to guest cart locally and notify subscribers
-  addItemToGuestCart(item: any): void {
-    const currentCart = this.getGuestCart();
+  addItemToGuestBasket(item: any): void {
+    const currentCart = this.getGuestBasket();
     const existing = currentCart.find((i) => i.productId === item.productId);
     debugger;
 
@@ -45,42 +46,41 @@ export class CartService {
       currentCart.push(item);
     }
 
-    this.saveGuestCart(currentCart);
+    this.saveGuestBasket(currentCart);
   }
 
-  updateGuestCartItemQuantity(productId: number, quantity: number): void {
-    const currentCart = this.getGuestCart();
+  updateGuestBasketItemQuantity(productId: number, quantity: number): void {
+    const currentCart = this.getGuestBasket();
     const existing = currentCart.find((i) => i.productId === productId);
 
     if (existing) {
       existing.quantity = quantity;
-      this.saveGuestCart(currentCart);
+      this.saveGuestBasket(currentCart);
     }
   }
 
-  // Get guest cart from localStorage
-  getGuestCart(): any[] {
-    const raw = localStorage.getItem(this.GUEST_CART_KEY);
+  getGuestBasket(): any[] {
+    const raw = localStorage.getItem(this.GUEST_BASKET_KEY);
     return raw ? JSON.parse(raw) : [];
   }
 
   // Save guest cart to localStorage and emit changes
-  private saveGuestCart(cart: any[]): void {
-    localStorage.setItem(this.GUEST_CART_KEY, JSON.stringify(cart));
-    this.cartSubject.next(cart);
+  private saveGuestBasket(cart: any[]): void {
+    localStorage.setItem(this.GUEST_BASKET_KEY, JSON.stringify(cart));
+    this.basketSubject.next(cart);
   }
 
-  removeItemFromGuestCart(productId: number): void {
-    const currentCart = this.getGuestCart();
+  removeItemFromGuestBasket(productId: number): void {
+    const currentCart = this.getGuestBasket();
     const updatedCart = currentCart.filter(
       (item) => item.productId !== productId
     );
-    this.saveGuestCart(updatedCart);
+    this.saveGuestBasket(updatedCart);
   }
 
   // Clear guest cart and notify subscribers
-  clearGuestCart(): void {
-    localStorage.removeItem(this.GUEST_CART_KEY);
-    this.cartSubject.next([]);
+  clearGuestBasket(): void {
+    localStorage.removeItem(this.GUEST_BASKET_KEY);
+    this.basketSubject.next([]);
   }
 }

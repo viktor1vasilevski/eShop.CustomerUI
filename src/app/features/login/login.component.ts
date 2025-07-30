@@ -12,7 +12,7 @@ import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { StorageService } from '../../core/services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CartService } from '../../core/services/cart.service';
+import { BasketService } from '../../core/services/basket.service';
 declare var bootstrap: any;
 
 @Component({
@@ -37,7 +37,7 @@ export class LoginComponent {
     private _notificationService: NotificationService,
     private _storageService: StorageService,
     private router: Router,
-    private _cartService: CartService
+    private _basketService: BasketService
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -64,55 +64,44 @@ export class LoginComponent {
     debugger;
     this._authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
-        if (response?.success && response?.data) {
-          this._notificationService.success(response.message);
+        debugger
+        this._notificationService.success(response.message);
+        this._storageService.setAuth({
+          id: response.data.id,
+          name: response.data.name,
+          email: response.data.email,
+          token: response.data.token,
+        });
 
-          this._storageService.setAuth({
-            id: response.data.id,
-            name: response.data.name,
-            email: response.data.email,
-            token: response.data.token,
-          });
-
-          const afterLogin = () => {
-            debugger;
-            if (this.fromModal) {
-              debugger;
-              // Close the lo gin modal
-              const modalElement = document.getElementById('loginModal');
-              if (modalElement) {
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                modal?.hide();
-              }
-
-              // Optionally navigate somewhere (e.g., stay on page or go back to basket)
-              // this.router.navigate(['/basket']); // uncomment if desired
-            } else {
-              this.router.navigate(['/home']);
+        const afterLogin = () => {
+          debugger
+          if (this.fromModal) {
+            const modalElement = document.getElementById('loginModal');
+            if (modalElement) {
+              const modal = bootstrap.Modal.getInstance(modalElement);
+              modal?.hide();
             }
-          };
+          } else {
+            this.router.navigate(['/home']);
+          }
+        };
+        debugger
+        const guestBasket = this._basketService.getGuestBasket();
+        const userId = this._storageService.getUserId();
 
-          const guestCart = this._cartService.getGuestCart();
-          const userId = this._storageService.getUserId();
+        const cart = guestBasket.map((item: any) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+        }));
 
-          const cart = guestCart.map((item: any) => ({
-            productId: item.productId,
-            quantity: item.quantity
-          }));
-
-          this._cartService
-            .mergeGuestCartToBackend(userId, cart)
-            .subscribe({
-              complete: afterLogin,
-            });
-        } else {
-          this._notificationService.error(response.message);
-          this.isSubmitting = false;
-        }
+        this._basketService.mergeGuestBasketToBackend(userId, cart).subscribe({
+          complete: afterLogin,
+        });
+        this.isSubmitting = false;
       },
       error: (errorResponse: any) => {
-        this._errorHandlerService.handleErrors(errorResponse);
         this.isSubmitting = false;
+        this._errorHandlerService.handleErrors(errorResponse);
       },
     });
   }

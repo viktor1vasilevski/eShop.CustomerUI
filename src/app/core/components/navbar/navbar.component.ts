@@ -6,7 +6,7 @@ import { StorageService } from '../../services/storage.service';
 import { ErrorHandlerService } from '../../services/error-handler.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
-import { CartService } from '../../services/cart.service';
+import { BasketService } from '../../services/basket.service';
 
 @Component({
   selector: 'app-navbar',
@@ -28,7 +28,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
     private router: Router,
-    private cartService: CartService
+    private _basketService: BasketService
   ) {}
 
   ngOnDestroy(): void {
@@ -44,9 +44,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.subscription = this.cartService.cartChanges$.subscribe((cart) => {
+    this.subscription = this._basketService.basketChanges$.subscribe((basket) => {
       // Calculate total quantity of all items
-      this.basketItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+      this.basketItemCount = basket.reduce((sum, item) => sum + item.quantity, 0);
     });
   }
 

@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { CartService } from '../../core/services/cart.service';
 import { StorageService } from '../../core/services/storage.service';
 import { Router } from '@angular/router';
+import { BasketService } from '../../core/services/basket.service';
 declare var bootstrap: any;
 
 @Component({
@@ -20,14 +20,14 @@ export class BasketComponent implements OnInit, OnDestroy {
   private subscription?: Subscription;
 
   constructor(
-    private _cartService: CartService,
+    private _basketService: BasketService,
     private _storageService: StorageService,
     private router: Router
   ) {}
 
   ngOnInit() {
     debugger;
-    this.subscription = this._cartService.cartChanges$.subscribe((cart) => {
+    this.subscription = this._basketService.basketChanges$.subscribe((cart) => {
       this.basketItems = cart;
       this.calculateTotal();
     });
@@ -38,7 +38,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   clearBasket(): void {
-    this._cartService.clearGuestCart();
+    this._basketService.clearGuestBasket();
   }
 
   calculateTotal() {
@@ -50,7 +50,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   removeItem(item: any): void {
-    this._cartService.removeItemFromGuestCart(item.productId);
+    this._basketService.removeItemFromGuestBasket(item.productId);
   }
 
   updateQuantity(item: any, change: number): void {
@@ -79,10 +79,10 @@ export class BasketComponent implements OnInit, OnDestroy {
     } else {
       // Guest user: update localStorage cart
       debugger;
-      const currentCart = this._cartService.getGuestCart();
+      const currentCart = this._basketService.getGuestBasket();
       const existing = currentCart.find((i) => i.productId === item.productId);
       if (existing) {
-        this._cartService.updateGuestCartItemQuantity(
+        this._basketService.updateGuestBasketItemQuantity(
           item.productId,
           newQuantity
         );
