@@ -26,7 +26,6 @@ export class BasketComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    debugger;
     this.subscription = this._basketService.basketChanges$.subscribe((cart) => {
       this.basketItems = cart;
       this.calculateTotal();
@@ -42,7 +41,6 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   calculateTotal() {
-    debugger;
     this.totalPrice = this.basketItems.reduce(
       (sum: any, item: any) => sum + item.price * item.quantity,
       0
@@ -54,7 +52,6 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   updateQuantity(item: any, change: number): void {
-    debugger;
     const newQuantity = item.quantity + change;
 
     // Validate quantity boundaries
@@ -78,7 +75,6 @@ export class BasketComponent implements OnInit, OnDestroy {
       // });
     } else {
       // Guest user: update localStorage cart
-      debugger;
       const currentCart = this._basketService.getGuestBasket();
       const existing = currentCart.find((i) => i.productId === item.productId);
       if (existing) {

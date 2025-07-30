@@ -53,7 +53,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
 
-    debugger
+
 
     const basketItem = {
       productId: this.product.id,

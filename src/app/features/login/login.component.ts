@@ -48,7 +48,7 @@ export class LoginComponent {
     });
 
     this.route.queryParams.subscribe((params) => {
-      debugger;
+
       this.fromModal = params['fromModal'] === 'true';
     });
   }
@@ -61,10 +61,10 @@ export class LoginComponent {
       this.isSubmitting = false;
       return;
     }
-    debugger;
+
     this._authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
-        debugger
+
         this._notificationService.success(response.message);
         this._storageService.setAuth({
           id: response.data.id,
@@ -74,7 +74,7 @@ export class LoginComponent {
         });
 
         const afterLogin = () => {
-          debugger
+
           if (this.fromModal) {
             const modalElement = document.getElementById('loginModal');
             if (modalElement) {
@@ -85,7 +85,7 @@ export class LoginComponent {
             this.router.navigate(['/home']);
           }
         };
-        debugger
+
         const guestBasket = this._basketService.getGuestBasket();
         const userId = this._storageService.getUserId();
 

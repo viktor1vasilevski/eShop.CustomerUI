@@ -34,7 +34,6 @@ export class BasketService {
   addItemToGuestBasket(item: any): void {
     const currentCart = this.getGuestBasket();
     const existing = currentCart.find((i) => i.productId === item.productId);
-    debugger;
 
     if (existing) {
       if (existing.quantity >= existing.unitQuantity) {
