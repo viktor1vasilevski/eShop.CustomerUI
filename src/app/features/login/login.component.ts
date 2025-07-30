@@ -36,8 +36,7 @@ export class LoginComponent {
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
 
-    private router: Router,
-
+    private router: Router
   ) {
     this.loginForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -48,7 +47,6 @@ export class LoginComponent {
     });
 
     this.route.queryParams.subscribe((params) => {
-
       this.fromModal = params['fromModal'] === 'true';
     });
   }
@@ -57,31 +55,12 @@ export class LoginComponent {
     this.isSubmitting = true;
 
     if (this.loginForm.invalid) {
-      this._notificationService.error('Invalid form');
       this.isSubmitting = false;
       return;
     }
 
     this._authService.login(this.loginForm.value).subscribe({
-      next: (response: any) => {
-
-        this._notificationService.success(response.message);
-
-
-        const afterLogin = () => {
-
-          if (this.fromModal) {
-            const modalElement = document.getElementById('loginModal');
-            if (modalElement) {
-              const modal = bootstrap.Modal.getInstance(modalElement);
-              modal?.hide();
-            }
-          } else {
-            this.router.navigate(['/home']);
-          }
-        };
-
-      },
+      next: (response: any) => {},
       error: (errorResponse: any) => {
         this.isSubmitting = false;
         this._errorHandlerService.handleErrors(errorResponse);
