@@ -6,6 +6,7 @@ import { ErrorHandlerService } from '../../services/error-handler.service';
 import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { BasketService } from '../../services/basket.service';
 
 @Component({
   selector: 'app-navbar',
@@ -26,7 +27,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
     private router: Router,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _basketService: BasketService
   ) {}
 
   ngOnDestroy(): void {
@@ -54,5 +56,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     this._authService.logout();
+    this._basketService.clearBasket();
   }
 }
