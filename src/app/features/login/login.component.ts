@@ -53,6 +53,7 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
+    debugger
     this.isSubmitting = true;
 
     if (this.loginForm.invalid) {
@@ -70,7 +71,7 @@ export class LoginComponent {
 
         this._basketService.getBasketByUserId(response.data.id).subscribe({
           next: (basketResponse: any) => {
-            this._basketService.setBasketItems(basketResponse.data || []);
+            this._basketService.setBasketItems(basketResponse.data.items || []);
             this.isSubmitting = false;
             this.router.navigate(['/home']);
           },

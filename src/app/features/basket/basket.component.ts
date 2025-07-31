@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { Router } from '@angular/router';
+import { BasketService } from '../../core/services/basket.service';
 declare var bootstrap: any;
 
 @Component({
@@ -19,11 +20,16 @@ export class BasketComponent implements OnInit, OnDestroy {
   private subscription?: Subscription;
 
   constructor(
-    private router: Router
+    private router: Router,
+    private _basketService: BasketService
   ) {}
 
   ngOnInit() {
-
+    this._basketService.basketItems$.subscribe((items: any) => {
+      this.basketItems = items;
+      console.log(this.basketItems);
+      
+    })
   }
 
   ngOnDestroy() {
