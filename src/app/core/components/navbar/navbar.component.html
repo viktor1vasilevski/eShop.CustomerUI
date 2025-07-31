@@ -55,20 +55,6 @@
             </a>
           </ul>
         </li>
-
-        <!-- 🛒 Basket Icon here so it's on the left, but not too far -->
-        <li class="nav-item ms-3">
-          <a class="nav-link position-relative text-white" routerLink="/basket">
-            <i class="bi bi-cart" style="font-size: 1.2rem"></i>
-            <span
-              *ngIf="basketItemCount > 0"
-              class="position-absolute badge rounded-pill bg-danger"
-              style="top: -0.25rem; right: -0.5rem; font-size: 0.7rem"
-            >
-              {{ basketItemCount }}
-            </span>
-          </a>
-        </li>
       </ul>
 
       <!-- Right Side: ms-auto pushes everything to the right -->
