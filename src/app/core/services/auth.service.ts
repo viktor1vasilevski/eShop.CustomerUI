@@ -53,6 +53,10 @@ export class AuthService {
     return this.getUser()?.email || null;
   }
 
+  getUserId(): string | null {
+    return this.getUser()?.id || null;
+  }
+
   isLoggedIn(): boolean {
     return !!this.getUser();
   }

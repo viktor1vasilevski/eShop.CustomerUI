@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -21,5 +21,13 @@ export class DataService {
 
   post<ResponseType>(url: string, body: any): Observable<ResponseType> {
     return this.http.post<ResponseType>(url, body);
+  }
+
+  patch<ResponseType>(url: string, body: any): Observable<ResponseType> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.patch<ResponseType>(url, body, { headers });
   }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 export interface BasketItem {
   productId: string;
@@ -26,7 +27,10 @@ export class BasketService {
   /** number of distinct items */
   distinctItemCount$ = this.basketItems$.pipe(map((items) => items.length));
 
-  constructor(private _dataApiService: DataService) {}
+  constructor(
+    private _dataApiService: DataService,
+    private _authService: AuthService
+  ) {}
 
   // --- backend fetch ---
   getBasketByUserId(userId: string): Observable<any[]> {
@@ -73,13 +77,48 @@ export class BasketService {
   }
 
   updateItemQuantity(productId: string, newQuantity: number): void {
+    debugger;
     const current = [...this._basketItems.value];
     const item = current.find((i) => i.productId === productId);
     if (!item) return;
 
-    // enforce bounds
-    item.quantity = Math.max(1, Math.min(newQuantity, item.unitQuantity));
+    // Clamp quantity between 1 and unitQuantity
+    const clampedQuantity = Math.max(
+      1,
+      Math.min(newQuantity, item.unitQuantity)
+    );
+
+    if (item.quantity === clampedQuantity) {
+      // No change needed
+      return;
+    }
+
+    // Optimistically update local state
+    const oldQuantity = item.quantity;
+    item.quantity = clampedQuantity;
+    this._basketItems.next(current);
     this.persist(current);
+
+    let userId = this._authService.getUserId();
+
+    // Patch backend
+    this._dataApiService
+      .patch(`${this.baseUrl}/basket/${userId}/items/${productId}`, {
+        quantity: clampedQuantity,
+      })
+      .subscribe({
+        next: () => {
+          // Success: local state already updated
+        },
+        error: (err) => {
+          console.error('Failed to update quantity on server', err);
+          // Rollback local update on failure
+          item.quantity = oldQuantity;
+          this._basketItems.next(current);
+          this.persist(current);
+          // Optional: Notify user about the failure using a notification service
+        },
+      });
   }
 
   addOrMergeItem(item: BasketItem): void {
@@ -127,4 +166,15 @@ export class BasketService {
   totalQuantity$ = this.basketItems$.pipe(
     map((items) => items.reduce((sum, i) => sum + (i.quantity || 0), 0))
   );
+
+  updateItemQuantityServer(
+    userId: string,
+    productId: string,
+    quantity: number
+  ): Observable<any> {
+    return this._dataApiService.patch(
+      `${this.baseUrl}/basket/${userId}/items/${productId}`,
+      { quantity }
+    );
+  }
 }
