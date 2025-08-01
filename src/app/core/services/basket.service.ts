@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface BasketItem {
   productId: string;
@@ -22,6 +23,8 @@ export class BasketService {
     this.loadFromStorage()
   );
   basketItems$ = this._basketItems.asObservable();
+  /** number of distinct items */
+  distinctItemCount$ = this.basketItems$.pipe(map((items) => items.length));
 
   constructor(private _dataApiService: DataService) {}
 
@@ -119,4 +122,9 @@ export class BasketService {
 
     this.persist(Array.from(mergedMap.values()));
   }
+
+  /** total quantity (sum of item.quantity) */
+  totalQuantity$ = this.basketItems$.pipe(
+    map((items) => items.reduce((sum, i) => sum + (i.quantity || 0), 0))
+  );
 }

@@ -41,6 +41,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._authService.currentUser$.subscribe((user) => {
       this.userEmail = user?.email || null;
     });
+
+    this._basketService.totalQuantity$.subscribe((count) => {
+      this.basketItemCount = count;
+    });
   }
 
   loadCategoriesWithSubcategoriesForMenu(): void {
