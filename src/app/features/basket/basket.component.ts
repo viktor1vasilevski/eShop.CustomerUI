@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
-
 import { Router } from '@angular/router';
 import { BasketService } from '../../core/services/basket.service';
 declare var bootstrap: any;
@@ -19,17 +18,18 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   private subscription?: Subscription;
 
-  constructor(
-    private router: Router,
-    private _basketService: BasketService
-  ) {}
+  constructor(private router: Router, private _basketService: BasketService) {}
 
   ngOnInit() {
-    this._basketService.basketItems$.subscribe((items: any) => {
-      this.basketItems = items;
-      console.log(this.basketItems);
-      
-    })
+    // hydrate from storage if needed
+    this._basketService.loadBasketFromStorage();
+
+    this.subscription = this._basketService.basketItems$.subscribe(
+      (items: any[]) => {
+        this.basketItems = items;
+        this.calculateTotal();
+      }
+    );
   }
 
   ngOnDestroy() {
@@ -37,35 +37,36 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   clearBasket(): void {
-    
+    this._basketService.clearBasket();
   }
 
   calculateTotal() {
     this.totalPrice = this.basketItems.reduce(
-      (sum: any, item: any) => sum + item.price * item.quantity,
+      (sum: number, item: any) => sum + item.price * item.quantity,
       0
     );
   }
 
   removeItem(item: any): void {
-    
+    this._basketService.removeItem(item.productId);
   }
 
   updateQuantity(item: any, change: number): void {
     const newQuantity = item.quantity + change;
 
-    // Validate quantity boundaries
-    if (newQuantity < 1) {
-      return;
-    }
-    if (newQuantity > item.unitQuantity) {
+    if (newQuantity < 1 || newQuantity > item.unitQuantity) {
       return;
     }
 
+    this._basketService.updateItemQuantity(item.productId, newQuantity);
   }
 
   onCheckout(): void {
-
+    // placeholder: implement actual checkout flow
+    if (!this._basketService) {
+      return;
+    }
+    console.log('Checking out with', this.basketItems);
   }
 
   goToLogin(event: Event) {
