@@ -7,7 +7,7 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ProductService {
-  private baseUrl = 'https://localhost:7106/api';
+  private baseUrl = 'https://localhost:44366/api';
   constructor(private _dataApiService: DataService) {}
 
   getProducts(request: any): Observable<any> {
