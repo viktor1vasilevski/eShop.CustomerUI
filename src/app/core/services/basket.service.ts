@@ -24,7 +24,6 @@ export class BasketService {
     this.loadFromStorage()
   );
   basketItems$ = this._basketItems.asObservable();
-  /** number of distinct items */
   distinctItemCount$ = this.basketItems$.pipe(map((items) => items.length));
 
   constructor(
@@ -60,121 +59,43 @@ export class BasketService {
     this.persist(items);
   }
 
-  loadBasketFromStorage(): void {
-    this._basketItems.next(this.loadFromStorage());
+  getLocalBasketItems(): BasketItem[] {
+    return this.loadFromStorage();
   }
 
-  clearBasket(): void {
+  mergeBasket(items: BasketItem[]): Observable<void> {
+    return this._dataApiService.post(`${this.baseUrl}/basket/merge`, items);
+  }
+
+  updateItemQuantity(
+    userId: string | null,
+    productId: string,
+    quantity: number
+  ): Observable<void> {
+    return this._dataApiService.patch<void>(
+      `${this.baseUrl}/basket/${userId}/items/${productId}`,
+      { quantity }
+    );
+  }
+
+  clearLocalBasket(): void {
     localStorage.removeItem(this.storageKey);
     this._basketItems.next([]);
   }
 
-  removeItem(productId: string): void {
-    const updated = this._basketItems.value.filter(
-      (i) => i.productId !== productId
-    );
-    this.persist(updated);
-  }
+  addLocalItem(item: BasketItem): void {
+    const items = this.loadFromStorage();
+    const existing = items.find((i) => i.productId === item.productId);
 
-  updateItemQuantity(productId: string, newQuantity: number): void {
-    debugger;
-    const current = [...this._basketItems.value];
-    const item = current.find((i) => i.productId === productId);
-    if (!item) return;
-
-    // Clamp quantity between 1 and unitQuantity
-    const clampedQuantity = Math.max(
-      1,
-      Math.min(newQuantity, item.unitQuantity)
-    );
-
-    if (item.quantity === clampedQuantity) {
-      // No change needed
-      return;
-    }
-
-    // Optimistically update local state
-    const oldQuantity = item.quantity;
-    item.quantity = clampedQuantity;
-    this._basketItems.next(current);
-    this.persist(current);
-
-    let userId = this._authService.getUserId();
-
-    // Patch backend
-    this._dataApiService
-      .patch(`${this.baseUrl}/basket/${userId}/items/${productId}`, {
-        quantity: clampedQuantity,
-      })
-      .subscribe({
-        next: () => {
-          // Success: local state already updated
-        },
-        error: (err) => {
-          console.error('Failed to update quantity on server', err);
-          // Rollback local update on failure
-          item.quantity = oldQuantity;
-          this._basketItems.next(current);
-          this.persist(current);
-          // Optional: Notify user about the failure using a notification service
-        },
-      });
-  }
-
-  addOrMergeItem(item: BasketItem): void {
-    const current = [...this._basketItems.value];
-    const existing = current.find((i) => i.productId === item.productId);
     if (existing) {
       existing.quantity = Math.min(
         existing.quantity + item.quantity,
-        existing.unitQuantity
+        item.unitQuantity
       );
     } else {
-      current.push({ ...item });
+      items.push(item);
     }
-    this.persist(current);
-  }
 
-  /**
-   * Merge a basket fetched from server with localStorage basket.
-   * Strategy: prefer summing quantities (bounded by unitQuantity).
-   */
-  mergeServerBasket(serverItems: BasketItem[]): void {
-    const local = [...this._basketItems.value];
-    const mergedMap = new Map<string, BasketItem>();
-
-    // start with local
-    local.forEach((i) => mergedMap.set(i.productId, { ...i }));
-
-    // merge server items
-    serverItems.forEach((si) => {
-      const existing = mergedMap.get(si.productId);
-      if (existing) {
-        existing.quantity = Math.min(
-          existing.quantity + si.quantity,
-          existing.unitQuantity
-        );
-      } else {
-        mergedMap.set(si.productId, { ...si });
-      }
-    });
-
-    this.persist(Array.from(mergedMap.values()));
-  }
-
-  /** total quantity (sum of item.quantity) */
-  totalQuantity$ = this.basketItems$.pipe(
-    map((items) => items.reduce((sum, i) => sum + (i.quantity || 0), 0))
-  );
-
-  updateItemQuantityServer(
-    userId: string,
-    productId: string,
-    quantity: number
-  ): Observable<any> {
-    return this._dataApiService.patch(
-      `${this.baseUrl}/basket/${userId}/items/${productId}`,
-      { quantity }
-    );
+    this.persist(items);
   }
 }

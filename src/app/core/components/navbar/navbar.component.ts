@@ -42,7 +42,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.userEmail = user?.email || null;
     });
 
-    this._basketService.totalQuantity$.subscribe((count) => {
+    this._basketService.distinctItemCount$.subscribe((count) => {
       this.basketItemCount = count;
     });
   }
@@ -60,6 +60,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     this._authService.logout();
-    this._basketService.clearBasket();
+    //this._basketService.clearBasket();
   }
 }

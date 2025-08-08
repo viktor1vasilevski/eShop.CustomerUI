@@ -22,7 +22,7 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // hydrate from storage if needed
-    this._basketService.loadBasketFromStorage();
+    //this._basketService.loadBasketFromStorage();
 
     this.subscription = this._basketService.basketItems$.subscribe(
       (items: any[]) => {
@@ -37,7 +37,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   clearBasket(): void {
-    this._basketService.clearBasket();
+    //this._basketService.clearBasket();
   }
 
   calculateTotal() {
@@ -48,7 +48,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   removeItem(item: any): void {
-    this._basketService.removeItem(item.productId);
+    //this._basketService.removeItem(item.productId);
   }
 
   updateQuantity(item: any, change: number): void {
@@ -58,7 +58,7 @@ export class BasketComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this._basketService.updateItemQuantity(item.productId, newQuantity);
+    //this._basketService.updateItemQuantity(item.productId, newQuantity);
   }
 
   onCheckout(): void {

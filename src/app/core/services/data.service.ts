@@ -23,6 +23,13 @@ export class DataService {
     return this.http.post<ResponseType>(url, body);
   }
 
+  put<ResponseType>(url: string, body: any): Observable<ResponseType> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    return this.http.put<ResponseType>(url, body, { headers });
+  }
+
   patch<ResponseType>(url: string, body: any): Observable<ResponseType> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
