@@ -17,7 +17,7 @@ export interface BasketItem {
   providedIn: 'root',
 })
 export class BasketService {
-  private baseUrl = 'https://localhost:7106/api';
+  private baseUrl = 'https://localhost:44366/api';
   private readonly storageKey = 'basket';
 
   private _basketItems = new BehaviorSubject<BasketItem[]>(

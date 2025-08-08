@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'https://localhost:7106/api';
+  private baseUrl = 'https://localhost:44366/api';
   private readonly userKey = 'user';
 
   private currentUserSubject = new BehaviorSubject<any | null>(
