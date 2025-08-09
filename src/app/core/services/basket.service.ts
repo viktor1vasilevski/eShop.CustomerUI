@@ -31,6 +31,13 @@ export class BasketService {
     private _authService: AuthService
   ) {}
 
+  removeItem(productId: any): void {
+    const items = this.loadFromStorage().filter(
+      (i: any) => i.productId !== productId
+    );
+    this.persist(items);
+  }
+
   // --- backend fetch ---
   getBasketByUserId(userId: string): Observable<any[]> {
     return this._dataApiService.getById(`${this.baseUrl}/basket/${userId}`);

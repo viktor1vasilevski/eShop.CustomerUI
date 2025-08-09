@@ -52,9 +52,9 @@ export class BasketComponent implements OnInit, OnDestroy {
     );
   }
 
-  removeItem(item: any): void {
-    //this._basketService.removeItem(item.productId);
-  }
+removeItem(item: any): void {
+  this._basketService.removeItem(item.productId);
+}
 
   updateQuantity(item: any, change: number): void {
     if (
