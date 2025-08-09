@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { BasketService } from '../../core/services/basket.service';
+import { AuthService } from '../../core/services/auth.service';
 declare var bootstrap: any;
 
 @Component({
@@ -18,7 +19,11 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   private subscription?: Subscription;
 
-  constructor(private router: Router, private _basketService: BasketService) {}
+  constructor(
+    private router: Router,
+    private _basketService: BasketService,
+    private _authService: AuthService
+  ) {}
 
   ngOnInit() {
     // hydrate from storage if needed
@@ -37,7 +42,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   clearBasket(): void {
-    //this._basketService.clearBasket();
+    this._basketService.clearLocalBasket();
   }
 
   calculateTotal() {
@@ -52,13 +57,26 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   updateQuantity(item: any, change: number): void {
-    const newQuantity = item.quantity + change;
-
-    if (newQuantity < 1 || newQuantity > item.unitQuantity) {
+    if (
+      (change === -1 && item.quantity <= 1) ||
+      (change === 1 && item.quantity >= item.unitQuantity)
+    ) {
       return;
     }
 
-    //this._basketService.updateItemQuantity(item.productId, newQuantity);
+    if (this._authService.isLoggedIn()) {
+      const userId = this._authService.getUserId();
+      this._basketService
+        .updateItemQuantity(userId, item.productId, change)
+        .subscribe({
+          next: () => {
+            this._basketService.updateLocalItemQuantity(item.productId, change);
+          },
+          error: (err: any) => console.error(err),
+        });
+    } else {
+      this._basketService.updateLocalItemQuantity(item.productId, change);
+    }
   }
 
   onCheckout(): void {

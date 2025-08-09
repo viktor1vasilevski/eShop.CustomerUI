@@ -78,6 +78,19 @@ export class BasketService {
     );
   }
 
+  updateLocalItemQuantity(productId: any, change: number): void {
+    const items = this.loadFromStorage();
+    const existing = items.find((i: any) => i.productId === productId);
+
+    if (existing) {
+      const newQuantity = existing.quantity + change;
+      if (newQuantity < 1 || newQuantity > existing.unitQuantity) return;
+
+      existing.quantity = newQuantity;
+      this.persist(items);
+    }
+  }
+
   clearLocalBasket(): void {
     localStorage.removeItem(this.storageKey);
     this._basketItems.next([]);
@@ -92,6 +105,18 @@ export class BasketService {
         existing.quantity + item.quantity,
         item.unitQuantity
       );
+    } else {
+      items.push(item);
+    }
+
+    this.persist(items);
+  }
+
+  updateLocalItem(item: BasketItem): void {
+    const items = this.loadFromStorage();
+    const existing = items.find((i) => i.productId === item.productId);
+    debugger;
+    if (existing) {
     } else {
       items.push(item);
     }

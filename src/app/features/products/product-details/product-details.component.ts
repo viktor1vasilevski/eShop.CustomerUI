@@ -6,6 +6,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { BasketService } from '../../../core/services/basket.service';
+import { NotificationType } from '../../../core/enums/notification-type.enum';
 
 @Component({
   selector: 'app-product-details',
@@ -82,7 +83,7 @@ addToBasket() {
     this._basketService.addLocalItem(basketItem);
   }
 
-  console.log('Basket item added:', basketItem);
+  this._notificationService.notify(NotificationType.Success, 'Item added to basket.')
 }
 
 }
