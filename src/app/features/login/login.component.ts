@@ -66,25 +66,53 @@ export class LoginComponent {
           response.notificationType,
           response.message
         );
+        let userId = response.data.id;
         this._authService.saveUser(response.data);
+        debugger
+        const localItems = this._basketService.getLocalBasketItems();
 
-        this._basketService.getBasketByUserId(response.data.id).subscribe({
-          next: (basketResponse: any) => {
-            this._basketService.setBasketItems(basketResponse.data.items || []);
-            this.isSubmitting = false;
-            this.router.navigate(['/home']);
-          },
-          error: () => {
-            // fallback to empty basket on error
-            this._basketService.setBasketItems([]);
-            this.isSubmitting = false;
-            this.router.navigate(['/home']);
-          },
-        });
+        if (localItems.length > 0) {
+          // Merge local basket with backend
+          this._basketService.mergeBasket(userId, localItems).subscribe({
+            next: (mergeResponse: any) => {
+              // Backend sends back the final merged basket
+              this._basketService.setBasketItems(
+                mergeResponse.data.items || []
+              );
+
+
+              this.isSubmitting = false;
+              this.router.navigate(['/home']);
+            },
+            error: () => {
+              // fallback: load backend basket even if merge fails
+              this.loadBackendBasket(response.data.id);
+            },
+          });
+        } else {
+          // No local items → just load backend basket
+          this.loadBackendBasket(response.data.id);
+        }
       },
       error: (errorResponse: any) => {
         this.isSubmitting = false;
         this._errorHandlerService.handleErrors(errorResponse);
+      },
+    });
+  }
+
+  // helper for backend-only load
+  private loadBackendBasket(userId: string) {
+    this._basketService.getBasketByUserId(userId).subscribe({
+      next: (basketResponse: any) => {
+        this._basketService.setBasketItems(basketResponse.data.items || []);
+        this.isSubmitting = false;
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        this._basketService.setBasketItems([]);
+        this.isSubmitting = false;
+        this.router.navigate(['/home']);
       },
     });
   }

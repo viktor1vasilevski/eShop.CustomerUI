@@ -60,6 +60,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   logout() {
     this._authService.logout();
-    //this._basketService.clearBasket();
+    this._basketService.clearLocalBasket();
   }
 }

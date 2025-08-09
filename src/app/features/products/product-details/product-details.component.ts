@@ -64,10 +64,10 @@ addToBasket() {
 
   if (this._authService.isLoggedIn()) {
     const localItems = this._basketService.getLocalBasketItems();
-
+    const userId = this._authService.getUserId();
     if (localItems.length > 0) {
       // Merge local basket with backend basket
-      this._basketService.mergeBasket(localItems).subscribe(() => {
+      this._basketService.mergeBasket(userId, localItems).subscribe(() => {
         this._basketService.clearLocalBasket();
       });
     } else {

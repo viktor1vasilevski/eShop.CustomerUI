@@ -70,8 +70,8 @@ export class BasketService {
     return this.loadFromStorage();
   }
 
-  mergeBasket(items: BasketItem[]): Observable<void> {
-    return this._dataApiService.post(`${this.baseUrl}/basket/merge`, items);
+  mergeBasket(userId: string | null, items: BasketItem[]): Observable<void> {
+    return this._dataApiService.post(`${this.baseUrl}/basket/merge/${userId}`, items);
   }
 
   updateItemQuantity(
