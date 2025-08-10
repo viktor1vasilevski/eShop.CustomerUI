@@ -36,7 +36,14 @@ export class BasketService {
       const userId = this._authService.getUserId();
       this.removeItemFromBackend(userId, productId).subscribe({
         next: (response: any) => {
-          console.log(response);
+          this.getBasketByUserId(userId).subscribe({
+            next: (response: any) => {
+              this.setBasketItems(response.data.items);
+            },
+            error: (errorResponse: any) => {
+
+            }
+          })
         },
         error: (errorResponse: any) => {
           console.log(errorResponse);
@@ -51,7 +58,7 @@ export class BasketService {
   }
 
   // --- backend fetch ---
-  getBasketByUserId(userId: string): Observable<any[]> {
+  getBasketByUserId(userId: string | null): Observable<any[]> {
     return this._dataApiService.getById(`${this.baseUrl}/basket/${userId}`);
   }
 
@@ -129,7 +136,7 @@ export class BasketService {
     productId: string
   ): Observable<any> {
     return this._dataApiService.delete<any>(
-      `${this.baseUrl}/basket/${userId}/item//${productId}`
+      `${this.baseUrl}/basket/${userId}/items/${productId}`
     );
   }
 

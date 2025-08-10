@@ -69,6 +69,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   updateQuantity(item: any, change: number): void {
+    debugger
     if (
       (change === -1 && item.quantity <= 1) ||
       (change === 1 && item.quantity >= item.unitQuantity)
