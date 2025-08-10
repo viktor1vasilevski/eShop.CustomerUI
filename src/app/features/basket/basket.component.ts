@@ -83,7 +83,18 @@ export class BasketComponent implements OnInit, OnDestroy {
         .updateItemQuantity(userId, item.productId, change)
         .subscribe({
           next: () => {
-            this._basketService.updateLocalItemQuantity(item.productId, change);
+            debugger
+            this._basketService.getBasketByUserId(userId).subscribe({
+              next: (response: any) => {
+                this._basketService.setBasketItems(response.data.items);
+              },
+              error: (errorResponse: any) => {
+                console.log(errorResponse);
+                
+              }
+            })
+
+
           },
           error: (err: any) => console.error(err),
         });

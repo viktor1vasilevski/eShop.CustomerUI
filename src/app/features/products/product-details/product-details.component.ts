@@ -25,8 +25,7 @@ export class ProductDetailsComponent implements OnInit {
     private _authService: AuthService,
     private _basketService: BasketService,
     private _notificationService: NotificationService,
-    private _errorHandlerService: ErrorHandlerService,
-
+    private _errorHandlerService: ErrorHandlerService
   ) {
     this.route.params.subscribe((params) => {
       this.productId = params['id'];
@@ -48,42 +47,48 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
-addToBasket() {
-  if (this.quantity < 1 || this.quantity > this.product.unitQuantity) {
-    return;
-  }
-
-  const basketItem = {
-    productId: this.product.id,
-    name: this.product.name,
-    price: this.product.unitPrice,
-    quantity: this.quantity,
-    unitQuantity: this.product.unitQuantity,
-    image: this.product.image
-  };
-
-  if (this._authService.isLoggedIn()) {
-    const localItems = this._basketService.getLocalBasketItems();
-    const userId = this._authService.getUserId();
-    if (localItems.length > 0) {
-      // Merge local basket with backend basket
-      this._basketService.mergeUserBasketWithLocalBasketItems(userId, localItems).subscribe(() => {
-        this._basketService.clearLocalBasket();
-      });
-    } else {
-      const userId = this._authService.getUserId();
-      this._basketService.updateItemQuantity(userId,
-        basketItem.productId,
-        basketItem.quantity
-      ).subscribe();
+  addToBasket() {
+    debugger;
+    if (this.quantity < 1 || this.quantity > this.product.unitQuantity) {
+      return;
     }
 
-  } else {
-    // Not logged in — keep items locally
-    this._basketService.addLocalItem(basketItem);
+    const basketItem = {
+      productId: this.product.id,
+      name: this.product.name,
+      price: this.product.unitPrice,
+      quantity: this.quantity,
+      unitQuantity: this.product.unitQuantity,
+      image: this.product.image,
+    };
+
+    if (this._authService.isLoggedIn()) {
+      const userId = this._authService.getUserId();
+      this._basketService
+        .updateItemQuantity(userId, basketItem.productId, basketItem.quantity)
+        .subscribe({
+          next: () => {
+            this._notificationService.notify(
+              NotificationType.Success,
+              'item added'
+            );
+
+            this._basketService.getBasketByUserId(userId).subscribe({
+              next: (response: any) => {
+                this._basketService.setBasketItems(response.data.items);
+              },
+              error: (errorResponse: any) => {
+                console.log(errorResponse);
+              },
+            });
+          },
+          error: (errorResponse: any) => {
+            console.error('Error adding item:', errorResponse);
+          },
+        });
+    } else {
+      // Not logged in — keep items locally
+      this._basketService.addLocalItem(basketItem);
+    }
   }
-
-  this._notificationService.notify(NotificationType.Success, 'Item added to basket.')
-}
-
 }
