@@ -42,7 +42,19 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   clearBasket(): void {
-    this._basketService.clearLocalBasket();
+    if (this._authService.isLoggedIn()) {
+      const userId = this._authService.getUserId();
+      this._basketService.clearBackendBasket(userId).subscribe({
+        next: (response: any) => {
+          this._basketService.clearLocalBasket();
+        },
+        error: (errorResponse: any) => {
+          console.log(errorResponse);
+        },
+      });
+    } else {
+      this._basketService.clearLocalBasket();
+    }
   }
 
   calculateTotal() {
@@ -52,9 +64,9 @@ export class BasketComponent implements OnInit, OnDestroy {
     );
   }
 
-removeItem(item: any): void {
-  this._basketService.removeItem(item.productId);
-}
+  removeItem(item: any): void {
+    this._basketService.removeItem(item.productId);
+  }
 
   updateQuantity(item: any, change: number): void {
     if (

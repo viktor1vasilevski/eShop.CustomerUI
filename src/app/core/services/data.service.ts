@@ -37,4 +37,8 @@ export class DataService {
 
     return this.http.patch<ResponseType>(url, body, { headers });
   }
+
+  delete<ResponseType>(url: string): Observable<ResponseType> {
+    return this.http.delete<ResponseType>(url);
+  }
 }

@@ -32,10 +32,22 @@ export class BasketService {
   ) {}
 
   removeItem(productId: any): void {
-    const items = this.loadFromStorage().filter(
-      (i: any) => i.productId !== productId
-    );
-    this.persist(items);
+    if (this._authService.isLoggedIn()) {
+      const userId = this._authService.getUserId();
+      this.removeItemFromBackend(userId, productId).subscribe({
+        next: (response: any) => {
+          console.log(response);
+        },
+        error: (errorResponse: any) => {
+          console.log(errorResponse);
+        },
+      });
+    } else {
+      const items = this.loadFromStorage().filter(
+        (i: any) => i.productId !== productId
+      );
+      this.persist(items);
+    }
   }
 
   // --- backend fetch ---
@@ -70,8 +82,11 @@ export class BasketService {
     return this.loadFromStorage();
   }
 
-  mergeBasket(userId: string | null, items: BasketItem[]): Observable<void> {
-    return this._dataApiService.post(`${this.baseUrl}/basket/merge/${userId}`, items);
+  mergeUserBasketWithLocalBasketItems(userId: string | null, items: BasketItem[]): Observable<void> {
+    return this._dataApiService.post(
+      `${this.baseUrl}/basket/${userId}/merge`,
+      items
+    );
   }
 
   updateItemQuantity(
@@ -101,6 +116,21 @@ export class BasketService {
   clearLocalBasket(): void {
     localStorage.removeItem(this.storageKey);
     this._basketItems.next([]);
+  }
+
+  clearBackendBasket(userId: string | null): Observable<any> {
+    return this._dataApiService.delete<any>(
+      `${this.baseUrl}/basket/${userId}/items/`
+    );
+  }
+
+  removeItemFromBackend(
+    userId: string | null,
+    productId: string
+  ): Observable<any> {
+    return this._dataApiService.delete<any>(
+      `${this.baseUrl}/basket/${userId}/item//${productId}`
+    );
   }
 
   addLocalItem(item: BasketItem): void {

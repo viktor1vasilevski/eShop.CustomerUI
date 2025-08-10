@@ -66,32 +66,15 @@ export class LoginComponent {
           response.notificationType,
           response.message
         );
+
         let userId = response.data.id;
         this._authService.saveUser(response.data);
-        debugger
+
         const localItems = this._basketService.getLocalBasketItems();
-
         if (localItems.length > 0) {
-          // Merge local basket with backend
-          this._basketService.mergeBasket(userId, localItems).subscribe({
-            next: (mergeResponse: any) => {
-              // Backend sends back the final merged basket
-              this._basketService.setBasketItems(
-                mergeResponse.data.items || []
-              );
-
-
-              this.isSubmitting = false;
-              this.router.navigate(['/home']);
-            },
-            error: () => {
-              // fallback: load backend basket even if merge fails
-              this.loadBackendBasket(response.data.id);
-            },
-          });
+          this.mergeBasket(userId, localItems);
         } else {
-          // No local items → just load backend basket
-          this.loadBackendBasket(response.data.id);
+          this.loadBackendBasket(userId);
         }
       },
       error: (errorResponse: any) => {
@@ -115,5 +98,20 @@ export class LoginComponent {
         this.router.navigate(['/home']);
       },
     });
+  }
+
+  private mergeBasket(userId: string, localItems: any) {
+    this._basketService
+      .mergeUserBasketWithLocalBasketItems(userId, localItems)
+      .subscribe({
+        next: () => {
+          this.loadBackendBasket(userId);
+          this.isSubmitting = false;
+          this.router.navigate(['/home']);
+        },
+        error: () => {
+          this.loadBackendBasket(userId);
+        },
+      });
   }
 }
