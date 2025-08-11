@@ -55,6 +55,9 @@
             </a>
           </ul>
         </li>
+        <li *ngIf="isCustomerLoggedIn" class="nav-item">
+          <a class="nav-link" routerLink="/orders">Orders</a>
+        </li>
       </ul>
 
       <!-- Right Side: ms-auto pushes everything to the right -->

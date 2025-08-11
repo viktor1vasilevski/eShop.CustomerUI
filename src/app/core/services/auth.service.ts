@@ -15,6 +15,9 @@ export class AuthService {
   );
   currentUser$ = this.currentUserSubject.asObservable();
 
+  private isCustomerLoggedIn = new BehaviorSubject<boolean>(false);
+  isCustomerLoggedIn$ = this.isCustomerLoggedIn.asObservable();
+
   constructor(private http: HttpClient, private router: Router) {}
 
   // --- API calls ---
@@ -61,9 +64,14 @@ export class AuthService {
     return !!this.getUser();
   }
 
+  isCusLoggedIn(value: boolean) {
+    this.isCustomerLoggedIn.next(value);
+  }
+
   logout(): void {
     localStorage.removeItem(this.userKey);
     this.currentUserSubject.next(null); // update observable
+    this.isCustomerLoggedIn.next(false);
     this.router.navigate(['/login']);
   }
 }

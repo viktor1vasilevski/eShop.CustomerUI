@@ -19,6 +19,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   categories: any[] = [];
   basketItemCount: number = 0;
   userEmail: string | null = null;
+  isCustomerLoggedIn: boolean = false;
   private authSubscription!: Subscription;
   private subscription?: Subscription;
 
@@ -45,6 +46,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._basketService.distinctItemCount$.subscribe((count) => {
       this.basketItemCount = count;
     });
+
+    this._authService.isCustomerLoggedIn$.subscribe((status) => {
+      this.isCustomerLoggedIn = status;
+    })
+
   }
 
   loadCategoriesWithSubcategoriesForMenu(): void {

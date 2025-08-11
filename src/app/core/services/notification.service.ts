@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ToastrService, ActiveToast, IndividualConfig } from 'ngx-toastr';
 import { NotificationType } from '../enums/notification-type.enum';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -10,7 +9,7 @@ export class NotificationService {
   constructor(private toastr: ToastrService) {}
 
   private showToast(
-    method: 'success' | 'error',
+    method: 'success' | 'error' | 'info',
     title: string,
     message: string | null | undefined,
     options: Partial<IndividualConfig> = {}
@@ -32,6 +31,10 @@ export class NotificationService {
     return this.showToast('error', 'Error', message, options);
   }
 
+    private info(message: string | null | undefined, options = {}) {
+    return this.showToast('info', 'Info', message, options);
+  }
+
   notify(
     type: NotificationType,
     message: string | null | undefined,
@@ -42,6 +45,8 @@ export class NotificationService {
         return this.success(message, options);
       case NotificationType.ServerError:
         return this.error(message, options);
+      case NotificationType.Info:
+        return this.info(message, options);
       default:
         console.warn('Unknown notification type:', type);
         return;

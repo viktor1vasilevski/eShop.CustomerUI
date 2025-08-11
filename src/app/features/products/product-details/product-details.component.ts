@@ -48,7 +48,6 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   addToBasket() {
-    debugger;
     if (this.quantity < 1 || this.quantity > this.product.unitQuantity) {
       return;
     }
@@ -89,6 +88,7 @@ export class ProductDetailsComponent implements OnInit {
     } else {
       // Not logged in — keep items locally
       this._basketService.addLocalItem(basketItem);
+      this._notificationService.notify(NotificationType.Success, 'item added');
     }
   }
 }

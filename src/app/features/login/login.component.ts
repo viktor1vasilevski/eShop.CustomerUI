@@ -13,6 +13,7 @@ import { NotificationService } from '../../core/services/notification.service';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { BasketService } from '../../core/services/basket.service';
+import { NotificationType } from '../../core/enums/notification-type.enum';
 
 declare var bootstrap: any;
 
@@ -69,10 +70,12 @@ export class LoginComponent {
 
         let userId = response.data.id;
         this._authService.saveUser(response.data);
+        this._authService.isCusLoggedIn(true);
 
         const localItems = this._basketService.getLocalBasketItems();
         if (localItems.length > 0) {
           this.mergeBasket(userId, localItems);
+          this._notificationService.notify(NotificationType.Info, 'baslet items merged!');
         } else {
           this.loadBackendBasket(userId);
         }

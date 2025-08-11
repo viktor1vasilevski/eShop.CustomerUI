@@ -159,7 +159,6 @@ export class BasketService {
   updateLocalItem(item: BasketItem): void {
     const items = this.loadFromStorage();
     const existing = items.find((i) => i.productId === item.productId);
-    debugger;
     if (existing) {
     } else {
       items.push(item);
