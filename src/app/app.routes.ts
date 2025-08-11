@@ -5,6 +5,8 @@ import { ProductListComponent } from './features/products/product-list/product-l
 import { ProductDetailsComponent } from './features/products/product-details/product-details.component';
 import { BasketComponent } from './features/basket/basket.component';
 import { HomeComponent } from './features/home/home.component';
+import { CheckoutComponent } from './features/checkout/checkout.component';
+import { OrdersComponent } from './features/orders/orders.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -14,4 +16,6 @@ export const routes: Routes = [
   { path: 'products', component: ProductListComponent },
   { path: 'products/:id', component: ProductDetailsComponent },
   { path: 'basket', component: BasketComponent },
+  { path: 'checkout', component: CheckoutComponent },
+  { path: 'orders', component: OrdersComponent },
 ];

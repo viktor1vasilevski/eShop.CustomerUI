@@ -1,0 +1,101 @@
+<div class="container-fluid py-5 px-4 px-md-5">
+  <div class="row g-4">
+    <!-- Checkout Items -->
+    <div class="col-lg-8">
+      <div class="card shadow-lg">
+        <div
+          class="card-header bg-white border-bottom text-dark fw-semibold d-flex justify-content-between align-items-center"
+        >
+          <h4 class="mb-0">Checkout</h4>
+          <small class="text-muted">Review your order</small>
+        </div>
+        <div class="card-body p-0">
+          <ng-container *ngIf="basketItems.length; else emptyCheckout">
+            <table class="table table-hover table-striped align-middle mb-0">
+              <colgroup>
+                <col style="width: 50%" />
+                <!-- Product -->
+                <col style="width: 20%" />
+                <!-- Quantity -->
+                <col style="width: 30%" />
+                <!-- Total -->
+              </colgroup>
+
+              <thead class="table-light">
+                <tr>
+                  <th>Product</th>
+                  <th class="text-center">Quantity</th>
+                  <th class="text-end">Total</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let item of basketItems">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <img
+                        [src]="item.image"
+                        alt="{{ item.name }}"
+                        class="me-3 rounded"
+                        style="width: 60px; height: 60px; object-fit: cover"
+                      />
+                      <span>{{ item.name }}</span>
+                    </div>
+                  </td>
+
+                  <td class="text-center">
+                    {{ item.quantity }}
+                  </td>
+
+                  <td class="text-end">
+                    ${{ item.price * item.quantity | number : "1.2-2" }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+
+          <!-- Empty Checkout Message -->
+          <ng-template #emptyCheckout>
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-cart-x fs-1"></i>
+              <p class="mt-3 mb-0">Your basket is empty.</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary & Pay Button -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm border">
+        <div class="card-body">
+          <h5 class="card-title">Order Summary</h5>
+          <hr />
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal:</span>
+            <strong>${{ totalPrice | number : "1.2-2" }}</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-3 text-muted">
+            <span>Shipping:</span>
+            <span>Free</span>
+          </div>
+          <hr />
+          <div class="d-flex justify-content-between fs-5 mb-4">
+            <span>Total:</span>
+            <strong class="text-primary"
+              >${{ totalPrice | number : "1.2-2" }}</strong
+            >
+          </div>
+          <button
+            class="btn btn-success w-100"
+            [disabled]="!basketItems.length"
+            (click)="onPay()"
+          >
+            <i class="bi bi-credit-card me-2"></i> Pay Now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
