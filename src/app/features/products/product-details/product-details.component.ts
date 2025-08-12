@@ -7,10 +7,32 @@ import { ErrorHandlerService } from '../../../core/services/error-handler.servic
 import { AuthService } from '../../../core/services/auth.service';
 import { BasketService } from '../../../core/services/basket.service';
 import { NotificationType } from '../../../core/enums/notification-type.enum';
+import { CommonModule } from '@angular/common';
+
+export interface Comment {
+  id: string;
+  orderId: string;
+  userId: string;
+  commentText?: string | null;
+  createdBy: string;
+  created: string; // ISO date string
+  lastModifiedBy?: string | null;
+  lastModified?: string | null;
+
+  user?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+
+  order?: {
+    id: string;
+  };
+}
 
 @Component({
   selector: 'app-product-details',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
 })
@@ -18,6 +40,30 @@ export class ProductDetailsComponent implements OnInit {
   productId: string = '';
   product: any = '';
   quantity = 1;
+  comments: Comment[] = [
+    {
+      id: '1',
+      orderId: 'order-123',
+      userId: 'user-456',
+      commentText: 'This product is awesome! Highly recommend it.',
+      createdBy: 'JohnDoe',
+      created: new Date().toISOString(),
+      lastModifiedBy: null,
+      lastModified: null,
+      user: {
+        id: 'user-456',
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      order: {
+        id: 'order-123',
+      },
+    },
+  ];
+
+  canComment: boolean = false;
+
+  newCommentText: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -37,9 +83,12 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   loadProductById() {
-    this._productService.getProductById(this.productId).subscribe({
+    debugger;
+    const userId = this._authService.getUserId();
+    this._productService.getProductById(this.productId, userId).subscribe({
       next: (response: any) => {
         this.product = response.data;
+        this.canComment = response.data.canComment;
       },
       error: (errorResponse: any) => {
         this._errorHandlerService.handleErrors(errorResponse);
@@ -91,4 +140,6 @@ export class ProductDetailsComponent implements OnInit {
       this._notificationService.notify(NotificationType.Success, 'item added');
     }
   }
+
+  submitComment() {}
 }

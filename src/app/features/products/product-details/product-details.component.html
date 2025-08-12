@@ -42,12 +42,49 @@
               [max]="product.unitQuantity"
             />
           </div>
-          <p>{{product.unitQuantity}} available</p>
+          <p>{{ product.unitQuantity }} available</p>
           <button class="btn btn-primary w-100" (click)="addToBasket()">
             Add to Basket
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- COMMENTS SECTION BELOW -->
+    <div class="comments-section mt-5">
+      <h5>Comments</h5>
+
+      <!-- Comment form (only if allowed) -->
+      <div *ngIf="canComment" class="mb-4">
+        <div style="max-width: 600px; width: 100%">
+          <textarea
+            [(ngModel)]="newCommentText"
+            class="form-control mb-2"
+            rows="3"
+            placeholder="Write your comment here..."
+          ></textarea>
+          <button class="btn btn-primary" (click)="submitComment()">
+            Submit Comment
+          </button>
+        </div>
+      </div>
+
+      <!-- Existing comments -->
+      <div
+        *ngIf="comments && comments.length > 0; else noComments"
+        style="max-width: 600px"
+      >
+        <div *ngFor="let comment of comments" class="mb-3 border-bottom pb-2">
+          <strong
+            >{{ comment.user?.firstName }} {{ comment.user?.lastName }}</strong
+          >
+          <p>{{ comment.commentText }}</p>
+        </div>
+      </div>
+
+      <ng-template #noComments>
+        <p>No comments yet.</p>
+      </ng-template>
     </div>
   </div>
 </div>
