@@ -84,13 +84,17 @@
         *ngIf="comments && comments.length > 0; else noComments"
         style="max-width: 600px"
       >
-        <div *ngFor="let comment of comments" class="mb-3 border-bottom pb-2">
-          <p>{{ comment.commentText }}</p>
+        <div
+          *ngFor="let comment of comments"
+          class="mb-3 border-bottom pb-2"
+          style="background-color: #f8f9fa; border-radius: 5px; padding: 10px"
+        >
+          <p class="mb-0">{{ comment.commentText }}</p>
         </div>
       </div>
 
       <ng-template #noComments>
-        <p>No comments yet.</p>
+        <p class="text-muted">No comments yet.</p>
       </ng-template>
     </div>
   </div>
