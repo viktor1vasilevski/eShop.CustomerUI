@@ -22,15 +22,12 @@ export class DataService {
     return this.http.get<ResponseType>(url, options);
   }
 
-  // post<ResponseType>(url: string, body: any): Observable<ResponseType> {
-  //   return this.http.post<ResponseType>(url, body);
-  // }
-
   post<RequestType, ResponseType>(
     url: string,
-    data: RequestType
+    data: RequestType,
+    options?: { headers?: HttpHeaders }
   ): Observable<ResponseType> {
-    return this.http.post<ResponseType>(url, data ?? null);
+    return this.http.post<ResponseType>(url, data ?? null, options);
   }
 
   put<ResponseType>(url: string, body: any): Observable<ResponseType> {
