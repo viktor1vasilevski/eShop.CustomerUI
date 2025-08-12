@@ -1,10 +1,12 @@
 <div class="container-fluid py-4 px-5" style="min-height: 80vh">
   <div class="card p-4 h-100 border-0">
-    <div class="row g-4 h-100">
+    <div class="row g-4 h-100" style="min-height: 50vh">
       <!-- Unified Image + Product Info -->
       <div class="col-lg-9 col-md-8 d-flex align-items-stretch">
         <!-- Unified Card -->
-        <div class="card w-100 p-3 border rounded shadow-sm d-flex flex-row">
+        <div
+          class="card w-100 p-3 border rounded shadow-sm d-flex flex-row h-100"
+        >
           <!-- Image Frame -->
           <div
             class="flex-shrink-0 text-center p-3 border rounded shadow-sm me-3"
@@ -35,14 +37,24 @@
       </div>
 
       <!-- Add to Cart -->
-      <div class="col-lg-3 col-md-4 d-flex h-100">
+      <div class="col-lg-3 col-md-4 d-flex align-items-stretch">
         <div
-          class="card p-3 w-100 d-flex flex-column justify-content-between h-100 border rounded shadow-sm"
+          class="card p-4 w-100 d-flex flex-column justify-content-between border rounded shadow-sm h-100"
           style="background-color: #f9f9f9"
         >
           <div>
-            <h5 class="mb-3">Add to Cart</h5>
-            <label for="quantity" class="form-label">Quantity</label>
+            <h5 class="mb-4">Add to Cart</h5>
+
+            <!-- Price -->
+            <div class="mb-3">
+              <span class="fw-semibold">Price:</span>
+              <span class="text-success fs-5">${{ product.unitPrice }}</span>
+            </div>
+
+            <!-- Quantity input -->
+            <label for="quantity" class="form-label fw-semibold"
+              >Quantity</label
+            >
             <input
               id="quantity"
               type="number"
@@ -51,8 +63,14 @@
               min="1"
               [max]="product.unitQuantity"
             />
+
+            <!-- Stock availability -->
+            <p class="text-muted mb-4" style="font-size: 0.9rem">
+              {{ product.unitQuantity }} available
+            </p>
           </div>
-          <p>{{ product.unitQuantity }} available</p>
+
+          <!-- Add button -->
           <button class="btn btn-primary w-100" (click)="addToBasket()">
             Add to Basket
           </button>
@@ -61,40 +79,54 @@
     </div>
 
     <!-- COMMENTS SECTION BELOW -->
-    <div class="card p-4 border rounded shadow-sm mt-5">
-      <h5 class="mb-4">Comments</h5>
+    <div class="card p-4 border rounded shadow-sm mt-5 comments-section">
+      <h5>Comments</h5>
 
       <!-- Comment form (only if allowed) -->
-      <div *ngIf="canComment" class="mb-4">
-        <div style="max-width: 600px; width: 100%">
-          <textarea
-            [(ngModel)]="newCommentText"
-            class="form-control mb-2"
-            rows="3"
-            placeholder="Write your comment here..."
-          ></textarea>
-          <button class="btn btn-primary" (click)="submitComment()">
-            Submit Comment
-          </button>
-        </div>
+      <div
+        *ngIf="canComment"
+        class="mb-4"
+        style="max-width: 600px; width: 100%"
+      >
+        <textarea
+          [(ngModel)]="newCommentText"
+          class="form-control mb-2"
+          rows="3"
+          placeholder="Write your comment here..."
+        ></textarea>
+        <button class="btn btn-primary" (click)="submitComment()">
+          Submit Comment
+        </button>
       </div>
 
-      <!-- Existing comments -->
       <div
         *ngIf="comments && comments.length > 0; else noComments"
         style="max-width: 600px"
       >
-        <div
-          *ngFor="let comment of comments"
-          class="mb-3 border-bottom pb-2"
-          style="background-color: #f8f9fa; border-radius: 5px; padding: 10px"
-        >
-          <p class="mb-0">{{ comment.commentText }}</p>
+        <div *ngFor="let comment of comments" class="comment-box">
+          <div
+            class="d-flex justify-content-between align-items-center mb-2"
+            style="border-bottom: 1px solid #e2e2e2; padding-bottom: 4px"
+          >
+            <span class="fw-semibold text-primary">
+              {{ comment.createdBy }}
+            </span>
+            <time
+              [attr.datetime]="comment.created"
+              class="text-muted"
+              style="font-size: 0.85rem"
+            >
+              {{ comment.created | date : "short" }}
+            </time>
+          </div>
+          <p class="mb-0" style="color: #333; line-height: 1.4">
+            {{ comment.commentText }}
+          </p>
         </div>
       </div>
 
       <ng-template #noComments>
-        <p class="text-muted">No comments yet.</p>
+        <p class="text-muted" style="max-width: 600px">No comments yet.</p>
       </ng-template>
     </div>
   </div>

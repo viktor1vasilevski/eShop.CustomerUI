@@ -12,6 +12,8 @@ import { CommentService } from '../../../core/services/comment.service';
 
 export interface Comment {
   commentText?: string | null;
+  created: string;
+  createdBy: string;
 }
 
 @Component({
