@@ -12,7 +12,7 @@ export class OrderService {
   constructor(private _dataApiService: DataService) {}
 
   getOrders(request: any): Observable<any> {
-    debugger
+    debugger;
     const params = new HttpParams().set('userId', request.userId);
 
     const url = `${this.baseUrl}/order`;
@@ -21,6 +21,6 @@ export class OrderService {
 
   placeOrder(request: any): Observable<any> {
     const url = `${this.baseUrl}/order`;
-    return this._dataApiService.post<any>(url, request);
+    return this._dataApiService.post<any, any>(url, request);
   }
 }

@@ -1,33 +1,43 @@
 <div class="container-fluid py-4 px-5" style="min-height: 80vh">
   <div class="card p-4 h-100 border-0">
     <div class="row g-4 h-100">
-      <!-- Image Section -->
-      <div class="col-lg-4 col-md-5 d-flex align-items-center h-100">
-        <div class="w-100 text-center">
-          <img
-            [src]="product.image"
-            [alt]="product.name"
-            class="img-fluid rounded mx-auto"
-            style="max-height: 70vh; object-fit: contain"
-          />
+      <!-- Unified Image + Product Info -->
+      <div class="col-lg-9 col-md-8 d-flex align-items-stretch">
+        <!-- Unified Card -->
+        <div class="card w-100 p-3 border rounded shadow-sm d-flex flex-row">
+          <!-- Image Frame -->
+          <div
+            class="flex-shrink-0 text-center p-3 border rounded shadow-sm me-3"
+            style="width: 40%; background-color: #fff"
+          >
+            <img
+              [src]="product.image"
+              [alt]="product.name"
+              class="img-fluid rounded"
+              style="max-height: 60vh; object-fit: contain"
+            />
+          </div>
+
+          <!-- Product Info Frame -->
+          <div
+            class="flex-grow-1 ps-4 d-flex flex-column justify-content-start border rounded shadow-sm p-3"
+            style="background-color: #fff"
+          >
+            <h2 class="fw-bold">{{ product.name }}</h2>
+            <h4 class="text-success mb-3">${{ product.unitPrice }}</h4>
+            <p>{{ product.description }}</p>
+            <p class="mb-1">
+              <strong>Category:</strong> {{ product.category }}
+            </p>
+            <p><strong>Subcategory:</strong> {{ product.subcategory }}</p>
+          </div>
         </div>
       </div>
 
-      <!-- Product Info -->
-      <div
-        class="col-lg-5 col-md-7 d-flex flex-column justify-content-start h-100"
-      >
-        <h2 class="fw-bold">{{ product.name }}</h2>
-        <h4 class="text-success mb-3">${{ product.unitPrice }}</h4>
-        <p>{{ product.description }}</p>
-        <p class="mb-1"><strong>Category:</strong> {{ product.category }}</p>
-        <p><strong>Subcategory:</strong> {{ product.subcategory }}</p>
-      </div>
-
       <!-- Add to Cart -->
-      <div class="col-lg-3 col-md-12 d-flex h-100">
+      <div class="col-lg-3 col-md-4 d-flex h-100">
         <div
-          class="card p-3 w-100 d-flex flex-column justify-content-between h-100"
+          class="card p-3 w-100 d-flex flex-column justify-content-between h-100 border rounded shadow-sm"
           style="background-color: #f9f9f9"
         >
           <div>
@@ -51,8 +61,8 @@
     </div>
 
     <!-- COMMENTS SECTION BELOW -->
-    <div class="comments-section mt-5">
-      <h5>Comments</h5>
+    <div class="card p-4 border rounded shadow-sm mt-5">
+      <h5 class="mb-4">Comments</h5>
 
       <!-- Comment form (only if allowed) -->
       <div *ngIf="canComment" class="mb-4">
@@ -75,9 +85,6 @@
         style="max-width: 600px"
       >
         <div *ngFor="let comment of comments" class="mb-3 border-bottom pb-2">
-          <strong
-            >{{ comment.user?.firstName }} {{ comment.user?.lastName }}</strong
-          >
           <p>{{ comment.commentText }}</p>
         </div>
       </div>

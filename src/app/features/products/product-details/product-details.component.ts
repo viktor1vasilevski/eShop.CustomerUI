@@ -8,26 +8,10 @@ import { AuthService } from '../../../core/services/auth.service';
 import { BasketService } from '../../../core/services/basket.service';
 import { NotificationType } from '../../../core/enums/notification-type.enum';
 import { CommonModule } from '@angular/common';
+import { CommentService } from '../../../core/services/comment.service';
 
 export interface Comment {
-  id: string;
-  orderId: string;
-  userId: string;
   commentText?: string | null;
-  createdBy: string;
-  created: string; // ISO date string
-  lastModifiedBy?: string | null;
-  lastModified?: string | null;
-
-  user?: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-
-  order?: {
-    id: string;
-  };
 }
 
 @Component({
@@ -38,28 +22,12 @@ export interface Comment {
 })
 export class ProductDetailsComponent implements OnInit {
   productId: string = '';
+  userId: string | null = '';
   product: any = '';
   quantity = 1;
-  comments: Comment[] = [
-    {
-      id: '1',
-      orderId: 'order-123',
-      userId: 'user-456',
-      commentText: 'This product is awesome! Highly recommend it.',
-      createdBy: 'JohnDoe',
-      created: new Date().toISOString(),
-      lastModifiedBy: null,
-      lastModified: null,
-      user: {
-        id: 'user-456',
-        firstName: 'John',
-        lastName: 'Doe',
-      },
-      order: {
-        id: 'order-123',
-      },
-    },
-  ];
+  comments: Comment[] = [];
+
+  my: any[] = [];
 
   canComment: boolean = false;
 
@@ -70,6 +38,7 @@ export class ProductDetailsComponent implements OnInit {
     private _productService: ProductService,
     private _authService: AuthService,
     private _basketService: BasketService,
+    private _commentService: CommentService,
     private _notificationService: NotificationService,
     private _errorHandlerService: ErrorHandlerService
   ) {
@@ -83,11 +52,12 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   loadProductById() {
-    debugger;
-    const userId = this._authService.getUserId();
-    this._productService.getProductById(this.productId, userId).subscribe({
+    this.userId = this._authService.getUserId();
+    this._productService.getProductById(this.productId, this.userId).subscribe({
       next: (response: any) => {
         this.product = response.data;
+        this.comments = response.data.comments;
+
         this.canComment = response.data.canComment;
       },
       error: (errorResponse: any) => {
@@ -141,5 +111,21 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
-  submitComment() {}
+  submitComment() {
+    let request = {
+      productId: this.productId,
+      userId: this.userId,
+      commentText: this.newCommentText,
+    };
+
+    this._commentService.createComment(request).subscribe({
+      next: (response: any) => {
+        debugger;
+        this.comments.push(response.data);
+      },
+      error: (errorResponse: any) => {
+        console.log(errorResponse);
+      },
+    });
+  }
 }
