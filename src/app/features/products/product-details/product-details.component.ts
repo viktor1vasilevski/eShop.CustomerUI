@@ -59,7 +59,7 @@ export class ProductDetailsComponent implements OnInit {
       next: (response: any) => {
         this.product = response.data;
         this.comments = response.data.comments;
-
+        debugger;
         this.canComment = response.data.canComment;
       },
       error: (errorResponse: any) => {

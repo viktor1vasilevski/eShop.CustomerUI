@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 export class OrdersComponent implements OnInit {
   userId: string | null = '';
   orders: any[] = [];
-  totalSpent = 2
+  totalSpent = 2;
 
   constructor(
     private _orderService: OrderService,
@@ -31,8 +31,8 @@ export class OrdersComponent implements OnInit {
   }
 
   get totalAmount(): number {
-  return this.orders.reduce((sum, o) => sum + o.totalAmount, 0);
-}
+    return this.orders.reduce((sum, o) => sum + o.totalAmount, 0);
+  }
 
   loadOrderForUser() {
     this.userId = this._authService.getUserId();
@@ -44,6 +44,7 @@ export class OrdersComponent implements OnInit {
     this._orderService.getOrders(request).subscribe({
       next: (response: any) => {
         this.orders = response.data;
+        console.log(this.orders);
       },
       error: (errorResponse: any) => {
         console.log(errorResponse);
