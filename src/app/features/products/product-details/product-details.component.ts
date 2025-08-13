@@ -9,16 +9,26 @@ import { BasketService } from '../../../core/services/basket.service';
 import { NotificationType } from '../../../core/enums/notification-type.enum';
 import { CommonModule } from '@angular/common';
 import { CommentService } from '../../../core/services/comment.service';
+import { SortOrder } from '../../../core/enums/sort-order.enum';
+import { PaginationComponent } from '../../../core/components/pagination/pagination.component';
+
+export interface CommentRequest {
+  skip: number;
+  take: number;
+  sortDirection: SortOrder;
+  sortBy: string;
+}
 
 export interface Comment {
   commentText?: string | null;
   created: string;
   createdBy: string;
+  rating: number;
 }
 
 @Component({
   selector: 'app-product-details',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, PaginationComponent],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
 })
@@ -29,11 +39,19 @@ export class ProductDetailsComponent implements OnInit {
   quantity = 1;
   comments: Comment[] = [];
 
-  my: any[] = [];
+  commentRequest: CommentRequest = {
+    skip: 0,
+    take: 5,
+    sortDirection: SortOrder.Descending,
+    sortBy: 'created',
+  };
 
   canComment: boolean = false;
-
   newCommentText: string = '';
+  newCommentRating: number = 0;
+  currentPage: number = 1;
+  totalCount: number = 0;
+  totalPages: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -51,6 +69,7 @@ export class ProductDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProductById();
+    this.loadComments();
   }
 
   loadProductById() {
@@ -58,9 +77,19 @@ export class ProductDetailsComponent implements OnInit {
     this._productService.getProductById(this.productId, this.userId).subscribe({
       next: (response: any) => {
         this.product = response.data;
-        this.comments = response.data.comments;
         debugger;
         this.canComment = response.data.canComment;
+      },
+      error: (errorResponse: any) => {
+        this._errorHandlerService.handleErrors(errorResponse);
+      },
+    });
+  }
+
+  loadComments() {
+    this._commentService.getComments(this.commentRequest).subscribe({
+      next: (response: any) => {
+        this.comments = response.data;
       },
       error: (errorResponse: any) => {
         this._errorHandlerService.handleErrors(errorResponse);
@@ -113,17 +142,40 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
+  changePage(page: number): void {
+    this.currentPage = page;
+    this.commentRequest.skip = (page - 1) * this.commentRequest.take;
+    this.loadComments();
+  }
+
+  onItemsPerPageChange(itemsPerPage: number): void {
+    this.commentRequest.take = itemsPerPage;
+    this.commentRequest.skip = 0;
+    this.currentPage = 1;
+    this.loadComments();
+  }
+
   submitComment() {
+    if (this.newCommentRating < 1 || this.newCommentRating > 5) {
+      this._notificationService.notify(
+        NotificationType.Info,
+        'Please select a rating between 1 and 5.'
+      );
+      return;
+    }
     let request = {
       productId: this.productId,
       userId: this.userId,
       commentText: this.newCommentText,
+      rating: this.newCommentRating,
     };
 
     this._commentService.createComment(request).subscribe({
       next: (response: any) => {
         debugger;
-        this.comments.push(response.data);
+        this.comments.unshift(response.data);
+        this.newCommentText = '';
+        this.newCommentRating = 0;
       },
       error: (errorResponse: any) => {
         console.log(errorResponse);

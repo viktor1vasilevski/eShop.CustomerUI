@@ -78,56 +78,105 @@
       </div>
     </div>
 
-    <!-- COMMENTS SECTION BELOW -->
-    <div class="card p-4 border rounded shadow-sm mt-5 comments-section">
-      <h5>Comments</h5>
-
-      <!-- Comment form (only if allowed) -->
+    <!-- COMMENTS SECTION -->
+    <div class="card shadow-sm mt-5">
       <div
-        *ngIf="canComment"
-        class="mb-4"
-        style="max-width: 600px; width: 100%"
+        class="card-header text-white d-flex justify-content-between align-items-center"
+        style="background-color: #495057"
       >
-        <textarea
-          [(ngModel)]="newCommentText"
-          class="form-control mb-2"
-          rows="3"
-          placeholder="Write your comment here..."
-        ></textarea>
-        <button class="btn btn-primary" (click)="submitComment()">
-          Submit Comment
-        </button>
+        <span><i class="bi bi-chat-left-text me-2"></i>Comments</span>
       </div>
 
-      <div
-        *ngIf="comments && comments.length > 0; else noComments"
-        style="max-width: 600px"
-      >
-        <div *ngFor="let comment of comments" class="comment-box">
-          <div
-            class="d-flex justify-content-between align-items-center mb-2"
-            style="border-bottom: 1px solid #e2e2e2; padding-bottom: 4px"
-          >
-            <span class="fw-semibold text-primary">
-              {{ comment.createdBy }}
-            </span>
-            <time
-              [attr.datetime]="comment.created"
-              class="text-muted"
-              style="font-size: 0.85rem"
-            >
-              {{ comment.created | date : "short" }}
-            </time>
+      <div class="card-body p-3">
+        <!-- Add Comment Form -->
+        <div
+          *ngIf="canComment"
+          class="mb-4"
+          style="max-width: 600px; width: 100%"
+        >
+          <textarea
+            [(ngModel)]="newCommentText"
+            class="form-control mb-2"
+            rows="3"
+            placeholder="Write your comment here..."
+          ></textarea>
+
+          <div class="mb-2">
+            <label class="form-label fw-semibold">Rating</label>
+            <select class="form-select" [(ngModel)]="newCommentRating">
+              <option [value]="0" disabled>Select rating</option>
+              <option *ngFor="let r of [1, 2, 3, 4, 5]" [value]="r">
+                {{ r }} star{{ r > 1 ? "s" : "" }}
+              </option>
+            </select>
           </div>
-          <p class="mb-0" style="color: #333; line-height: 1.4">
-            {{ comment.commentText }}
-          </p>
-        </div>
-      </div>
 
-      <ng-template #noComments>
-        <p class="text-muted" style="max-width: 600px">No comments yet.</p>
-      </ng-template>
+          <button class="btn btn-primary" (click)="submitComment()">
+            Submit Comment
+          </button>
+        </div>
+
+        <!-- Comments List -->
+        <div *ngIf="comments && comments.length > 0; else noComments">
+          <table
+            class="table table-hover align-middle"
+            style="table-layout: fixed; width: 100%"
+          >
+            <colgroup>
+              <col style="width: 35%" />
+              <col style="width: 45%" />
+              <col style="width: 20%" />
+            </colgroup>
+            <thead class="table-light">
+              <tr>
+                <th scope="col">User</th>
+                <th scope="col">Comment</th>
+                <th scope="col">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let comment of comments">
+                <td class="fw-semibold text-primary text-truncate">
+                  {{ comment.createdBy }}
+                </td>
+                <td class="text-truncate">
+                  {{ comment.commentText }}
+                  <div>
+                    <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+                      <i
+                        class="bi"
+                        [ngClass]="
+                          star <= comment.rating
+                            ? 'bi-star-fill text-warning'
+                            : 'bi-star text-muted'
+                        "
+                      ></i>
+                    </ng-container>
+                  </div>
+                </td>
+                <td class="text-muted" style="font-size: 0.85rem">
+                  {{ comment.created | date : "dd/MM/yyyy HH:mm" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="mt-3">
+            <app-pagination
+              [currentPage]="currentPage"
+              [totalPages]="totalPages"
+              [itemsPerPage]="commentRequest.take"
+              (pageChange)="changePage($event)"
+              (itemsPerPageChange)="onItemsPerPageChange($event)"
+            ></app-pagination>
+          </div>
+        </div>
+
+        <ng-template #noComments>
+          <p class="text-center text-muted">No comments yet.</p>
+        </ng-template>
+      </div>
     </div>
   </div>
 </div>
