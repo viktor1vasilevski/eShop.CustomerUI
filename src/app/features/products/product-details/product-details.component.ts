@@ -13,6 +13,7 @@ import { SortOrder } from '../../../core/enums/sort-order.enum';
 import { PaginationComponent } from '../../../core/components/pagination/pagination.component';
 
 export interface CommentRequest {
+  productId: string;
   skip: number;
   take: number;
   sortDirection: SortOrder;
@@ -40,6 +41,7 @@ export class ProductDetailsComponent implements OnInit {
   comments: Comment[] = [];
 
   commentRequest: CommentRequest = {
+    productId: '',
     skip: 0,
     take: 5,
     sortDirection: SortOrder.Descending,
@@ -64,6 +66,7 @@ export class ProductDetailsComponent implements OnInit {
   ) {
     this.route.params.subscribe((params) => {
       this.productId = params['id'];
+      this.commentRequest.productId = this.productId;
     });
   }
 
