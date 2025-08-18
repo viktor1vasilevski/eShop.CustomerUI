@@ -17,6 +17,7 @@ export class CommentService {
 
   getComments(request: any): Observable<any> {
     const params = new HttpParams()
+      .set('productId', request.productId)
       .set('skip', request.skip.toString())
       .set('take', request.take.toString())
       .set('sortDirection', request.sortDirection)
