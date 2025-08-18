@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { CommonModule } from '@angular/common';
@@ -17,7 +17,7 @@ export interface ProductRequest {
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css',
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
   productRequest: ProductRequest = {
     subcategoryId: '',
     unitPrice: 0,
@@ -31,11 +31,12 @@ export class ProductListComponent {
     private route: ActivatedRoute,
     private _productService: ProductService,
     private _errorHandlerService: ErrorHandlerService
-  ) {
-    this.route.queryParams.subscribe((params) => {
-      this.productRequest.subcategoryId = params['subcategoryId'];
-      this.loadProducts();
-    });
+  ) {}
+
+  ngOnInit(): void {
+    this.productRequest.subcategoryId =
+      this.route.snapshot.paramMap.get('subcategoryId') ?? '';
+    this.loadProducts();
   }
 
   loadProducts() {
