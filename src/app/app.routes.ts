@@ -8,6 +8,7 @@ import { HomeComponent } from './features/home/home.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { OrdersComponent } from './features/orders/orders.component';
 import { authGuard } from './core/guards/auth.guard';
+import { UnauthorizedComponent } from './features/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -19,4 +20,6 @@ export const routes: Routes = [
   { path: 'basket', component: BasketComponent },
   { path: 'checkout', component: CheckoutComponent },
   { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
+
+  { path: 'unauthorized', component: UnauthorizedComponent },
 ];
