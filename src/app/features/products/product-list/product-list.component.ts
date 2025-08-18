@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { CommonModule } from '@angular/common';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 
 export interface ProductRequest {
   unitPrice: number;
@@ -28,7 +29,8 @@ export class ProductListComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private _productService: ProductService
+    private _productService: ProductService,
+    private _errorHandlerService: ErrorHandlerService
   ) {
     this.route.queryParams.subscribe((params) => {
       this.productRequest.subcategoryId = params['subcategoryId'];
@@ -42,7 +44,8 @@ export class ProductListComponent {
         this.products = response.data;
       },
       error: (errorResponse: any) => {
-        console.log(errorResponse);
+        debugger;
+        this._errorHandlerService.handleErrors(errorResponse);
       },
     });
   }
