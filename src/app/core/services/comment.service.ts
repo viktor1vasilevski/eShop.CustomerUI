@@ -27,7 +27,6 @@ export class CommentService {
   }
 
   createComment(request: any): Observable<any> {
-    debugger;
     const token = this._authService.getToken();
     let headers = new HttpHeaders();
 

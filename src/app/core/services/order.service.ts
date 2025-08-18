@@ -12,7 +12,6 @@ export class OrderService {
   constructor(private _dataApiService: DataService) {}
 
   getOrders(request: any): Observable<any> {
-    debugger;
     const params = new HttpParams().set('userId', request.userId);
 
     const url = `${this.baseUrl}/order`;

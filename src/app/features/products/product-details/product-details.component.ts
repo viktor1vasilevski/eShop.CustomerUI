@@ -77,7 +77,6 @@ export class ProductDetailsComponent implements OnInit {
     this._productService.getProductById(this.productId, this.userId).subscribe({
       next: (response: any) => {
         this.product = response.data;
-        debugger;
         this.canComment = response.data.canComment;
       },
       error: (errorResponse: any) => {
@@ -90,11 +89,19 @@ export class ProductDetailsComponent implements OnInit {
     this._commentService.getComments(this.commentRequest).subscribe({
       next: (response: any) => {
         this.comments = response.data;
+        this.totalCount =
+          typeof response?.totalCount === 'number' ? response.totalCount : 0;
+        this.calculateTotalPages();
       },
       error: (errorResponse: any) => {
         this._errorHandlerService.handleErrors(errorResponse);
       },
     });
+  }
+
+  calculateTotalPages(): void {
+    const pages = Math.ceil(this.totalCount / this.commentRequest.take);
+    this.totalPages = Array.from({ length: pages }, (_, i) => i + 1);
   }
 
   addToBasket() {
@@ -172,7 +179,6 @@ export class ProductDetailsComponent implements OnInit {
 
     this._commentService.createComment(request).subscribe({
       next: (response: any) => {
-        debugger;
         this.comments.unshift(response.data);
         this.newCommentText = '';
         this.newCommentRating = 0;

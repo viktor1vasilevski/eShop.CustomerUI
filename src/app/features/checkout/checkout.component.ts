@@ -36,7 +36,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   onPay() {
-    debugger;
     const userId = this._authService.getUserId();
     const placeOrderRequest = {
       userId: userId,
