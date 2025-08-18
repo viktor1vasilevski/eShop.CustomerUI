@@ -36,12 +36,7 @@ export class OrdersComponent implements OnInit {
 
   loadOrderForUser() {
     this.userId = this._authService.getUserId();
-
-    let request = {
-      userId: this.userId,
-    };
-
-    this._orderService.getOrders(request).subscribe({
+    this._orderService.getOrdersForUser(this.userId).subscribe({
       next: (response: any) => {
         this.orders = response.data;
         console.log(this.orders);

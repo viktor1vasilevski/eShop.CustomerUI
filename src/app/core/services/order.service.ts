@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
 import { Observable } from 'rxjs';
-import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -11,11 +10,9 @@ export class OrderService {
 
   constructor(private _dataApiService: DataService) {}
 
-  getOrders(request: any): Observable<any> {
-    const params = new HttpParams().set('userId', request.userId);
-
-    const url = `${this.baseUrl}/order`;
-    return this._dataApiService.getAll<any>(url, params);
+  getOrdersForUser(userId: any): Observable<any> {
+    const url = `${this.baseUrl}/order/${userId}`;
+    return this._dataApiService.getById<any>(url);
   }
 
   placeOrder(request: any): Observable<any> {

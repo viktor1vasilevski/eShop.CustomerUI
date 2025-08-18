@@ -7,6 +7,7 @@ import { BasketComponent } from './features/basket/basket.component';
 import { HomeComponent } from './features/home/home.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { OrdersComponent } from './features/orders/orders.component';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -17,5 +18,5 @@ export const routes: Routes = [
   { path: 'products/:id', component: ProductDetailsComponent },
   { path: 'basket', component: BasketComponent },
   { path: 'checkout', component: CheckoutComponent },
-  { path: 'orders', component: OrdersComponent },
+  { path: 'orders', component: OrdersComponent, canActivate: [authGuard] },
 ];
