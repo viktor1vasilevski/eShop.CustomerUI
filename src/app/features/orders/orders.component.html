@@ -54,7 +54,19 @@
                       </thead>
                       <tbody>
                         <tr *ngFor="let item of order.items">
-                          <td>{{ item.productName }}</td>
+                          <td class="d-flex align-items-center">
+                            <img
+                              [src]="item.image"
+                              [alt]="item.productName"
+                              class="rounded me-2"
+                              style="
+                                width: 100px;
+                                height: 100px;
+                                object-fit: contain;
+                              "
+                            />
+                            <span>{{ item.productName }}</span>
+                          </td>
                           <td class="text-center">{{ item.quantity }}</td>
                           <td class="text-end">
                             ${{ item.unitPrice | number : "1.2-2" }}
