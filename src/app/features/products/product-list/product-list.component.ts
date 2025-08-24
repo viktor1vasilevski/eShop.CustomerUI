@@ -34,12 +34,14 @@ export class ProductListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.productRequest.subcategoryId =
-      this.route.snapshot.paramMap.get('subcategoryId') ?? '';
-    this.loadProducts();
+    this.route.queryParams.subscribe((params) => {
+      this.productRequest.subcategoryId = params['subcategoryId'];
+      this.loadProducts();
+    });
   }
 
   loadProducts() {
+    debugger;
     this._productService.getProducts(this.productRequest).subscribe({
       next: (response: any) => {
         this.products = response.data;
