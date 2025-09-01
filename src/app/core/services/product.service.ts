@@ -12,6 +12,7 @@ export class ProductService {
 
   getProducts(request: any): Observable<any> {
     const params = new HttpParams()
+      .set('categoryId', request.categoryId)
       .set('subcategoryId', request.subcategoryId)
       .set('unitPrice', request.unitPrice)
       .set('skip', request.skip.toString())

@@ -7,6 +7,7 @@ import { ErrorHandlerService } from '../../../core/services/error-handler.servic
 export interface ProductRequest {
   unitPrice: number;
   subcategoryId: string;
+  categoryId: string;
   skip: number;
   take: number;
 }
@@ -19,6 +20,7 @@ export interface ProductRequest {
 })
 export class ProductListComponent implements OnInit {
   productRequest: ProductRequest = {
+    categoryId: '',
     subcategoryId: '',
     unitPrice: 0,
     skip: 0,
@@ -35,19 +37,31 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      this.productRequest.subcategoryId = params['subcategoryId'];
+      // Reset request
+      this.productRequest.categoryId = '';
+      this.productRequest.subcategoryId = '';
+      this.productRequest.unitPrice = 0;
+      this.productRequest.skip = 0;
+      this.productRequest.take = 10;
+
+      if (params['subcategoryId']) {
+        this.productRequest.subcategoryId = params['subcategoryId'];
+      }
+
+      if (params['categoryId']) {
+        this.productRequest.categoryId = params['categoryId'];
+      }
+
       this.loadProducts();
     });
   }
 
   loadProducts() {
-    debugger;
     this._productService.getProducts(this.productRequest).subscribe({
       next: (response: any) => {
         this.products = response.data;
       },
       error: (errorResponse: any) => {
-        debugger;
         this._errorHandlerService.handleErrors(errorResponse);
       },
     });
