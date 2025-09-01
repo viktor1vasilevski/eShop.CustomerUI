@@ -17,7 +17,7 @@ export class DataService {
 
   getById<ResponseType>(
     url: string,
-    options?: { params?: HttpParams }
+    options?: { params?: HttpParams; headers?: HttpHeaders }
   ): Observable<ResponseType> {
     return this.http.get<ResponseType>(url, options);
   }

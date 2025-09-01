@@ -35,14 +35,14 @@ export class OrdersComponent implements OnInit {
   }
 
   loadOrderForUser() {
+    debugger;
     this.userId = this._authService.getUserId();
     this._orderService.getOrdersForUser(this.userId).subscribe({
       next: (response: any) => {
         this.orders = response.data;
-        console.log(this.orders);
       },
       error: (errorResponse: any) => {
-        console.log(errorResponse);
+        this._errorHandlerService.handleErrors(errorResponse);
       },
     });
   }

@@ -26,8 +26,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
     private _categoryService: CategoryService,
     private _errorHandlerService: ErrorHandlerService,
-    private _notificationService: NotificationService,
-    private router: Router,
     private _authService: AuthService,
     private _basketService: BasketService
   ) {}
@@ -47,7 +45,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.basketItemCount = count;
     });
 
+    debugger;
+
     this._authService.isCustomerLoggedIn$.subscribe((status) => {
+      debugger;
       this.isCustomerLoggedIn = status;
     });
   }
