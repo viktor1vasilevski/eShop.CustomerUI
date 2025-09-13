@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
+    <!-- Brand -->
     <a class="navbar-brand" routerLink="/home">MyApp</a>
 
+    <!-- Mobile toggle -->
     <button
       class="navbar-toggler"
       type="button"
@@ -15,9 +17,8 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-      <!-- Left Side -->
+      <!-- LEFT SIDE -->
       <ul class="navbar-nav me-auto">
-        <!-- Shop Dropdown -->
         <li class="nav-item dropdown" *ngIf="categories?.length">
           <a
             class="nav-link dropdown-toggle"
@@ -29,51 +30,68 @@
           >
             Shop
           </a>
-          <ul
-            class="dropdown-menu p-3"
+
+          <div
+            class="dropdown-menu mega-menu p-4"
             aria-labelledby="shopDropdown"
-            style="width: 600px"
           >
             <div class="row">
               <ng-container *ngFor="let category of categories">
-                <div class="col-md-4" *ngIf="category.subcategories.length > 0">
-                  <h6 class="dropdown-header">
+                <div class="col-md-3">
+                  <!-- Parent -->
+                  <h6 class="mega-category">
                     <a
-                      class="text-decoration-none"
                       [routerLink]="['/products']"
-                      [queryParams]="{ categoryId: category.categoryId }"
+                      [queryParams]="{ categoryId: category.id }"
                     >
                       {{ category.name }}
                     </a>
                   </h6>
-                  <a
-                    *ngFor="let sub of category.subcategories"
-                    class="dropdown-item"
-                    [routerLink]="['/products']"
-                    [queryParams]="{
-                      subcategoryId: sub.subcategoryId,
-                      categoryId: category.categoryId
-                    }"
-                  >
-                    {{ sub.name }}
-                  </a>
+
+                  <!-- Flattened children -->
+                  <ng-container *ngFor="let child of category.children">
+                    <div class="mega-subgroup">
+                      <strong>
+                        <a
+                          [routerLink]="['/products']"
+                          [queryParams]="{ categoryId: child.id }"
+                        >
+                          {{ child.name }}
+                        </a>
+                      </strong>
+
+                      <ul class="list-unstyled">
+                        <li *ngFor="let grand of child.children">
+                          <a
+                            [routerLink]="['/products']"
+                            [queryParams]="{ categoryId: grand.id }"
+                          >
+                            {{ grand.name }}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </ng-container>
                 </div>
               </ng-container>
             </div>
+
             <div class="dropdown-divider"></div>
             <a class="dropdown-item text-center fw-bold" routerLink="/products">
               View All Products
             </a>
-          </ul>
+          </div>
         </li>
+
+        <!-- Orders -->
         <li *ngIf="isCustomerLoggedIn" class="nav-item">
           <a class="nav-link" routerLink="/orders">Orders</a>
         </li>
       </ul>
 
-      <!-- Right Side: ms-auto pushes everything to the right -->
+      <!-- RIGHT SIDE -->
       <ul class="navbar-nav ms-auto align-items-center">
-        <!-- 1. User Email -->
+        <!-- User Email -->
         <li
           *ngIf="userEmail"
           class="nav-item nav-link disabled text-light me-3"
@@ -83,7 +101,7 @@
           Logged in as: {{ userEmail }}
         </li>
 
-        <!-- 2. Basket Icon -->
+        <!-- Basket -->
         <li class="nav-item me-3">
           <a class="nav-link position-relative text-white" routerLink="/basket">
             <i class="bi bi-cart" style="font-size: 1.2rem"></i>
@@ -97,12 +115,10 @@
           </a>
         </li>
 
-        <!-- 3. Logout link -->
+        <!-- Auth Links -->
         <li *ngIf="userEmail" class="nav-item">
           <a class="nav-link" (click)="logout()">Logout</a>
         </li>
-
-        <!-- Register / Login if not logged in -->
         <ng-container *ngIf="!userEmail">
           <li class="nav-item">
             <a class="nav-link" routerLink="/register">Register</a>
@@ -115,3 +131,26 @@
     </div>
   </div>
 </nav>
+
+<!-- Recursive Template -->
+<ng-template #renderTree let-node>
+  <h6 class="mega-category">
+    <a
+      class="text-dark text-decoration-none fw-bold"
+      [routerLink]="['/products']"
+      [queryParams]="{ categoryId: node.id }"
+    >
+      {{ node.name }}
+    </a>
+  </h6>
+
+  <!-- Render children if exist -->
+  <ul class="list-unstyled ms-3" *ngIf="node.children?.length">
+    <li *ngFor="let child of node.children">
+      <ng-template
+        [ngTemplateOutlet]="renderTree"
+        [ngTemplateOutletContext]="{ $implicit: child }"
+      ></ng-template>
+    </li>
+  </ul>
+</ng-template>

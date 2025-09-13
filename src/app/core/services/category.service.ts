@@ -10,7 +10,7 @@ export class CategoryService {
   constructor(private _dataApiService: DataService) {}
 
   getCategoriesWithSubcategoriesForMenu(): Observable<any> {
-    const url = `${this.baseUrl}/category/categoriesWithSubcategoriesForMenu`;
+    const url = `${this.baseUrl}/category/categoryTreeForMenu`;
     return this._dataApiService.getAll<any>(url);
   }
 }
