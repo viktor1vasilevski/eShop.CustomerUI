@@ -38,7 +38,6 @@
             <div class="row">
               <ng-container *ngFor="let category of categories">
                 <div class="col-md-3">
-                  <!-- Parent -->
                   <h6 class="mega-category">
                     <a
                       [routerLink]="['/products']"
@@ -48,30 +47,13 @@
                     </a>
                   </h6>
 
-                  <!-- Flattened children -->
-                  <ng-container *ngFor="let child of category.children">
-                    <div class="mega-subgroup">
-                      <strong>
-                        <a
-                          [routerLink]="['/products']"
-                          [queryParams]="{ categoryId: child.id }"
-                        >
-                          {{ child.name }}
-                        </a>
-                      </strong>
-
-                      <ul class="list-unstyled">
-                        <li *ngFor="let grand of child.children">
-                          <a
-                            [routerLink]="['/products']"
-                            [queryParams]="{ categoryId: grand.id }"
-                          >
-                            {{ grand.name }}
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </ng-container>
+                  <!-- Render children recursively -->
+                  <ng-container
+                    *ngTemplateOutlet="
+                      renderChildren;
+                      context: { $implicit: category.children }
+                    "
+                  ></ng-container>
                 </div>
               </ng-container>
             </div>
@@ -88,6 +70,43 @@
           <a class="nav-link" routerLink="/orders">Orders</a>
         </li>
       </ul>
+
+      <!-- Recursive template -->
+      <ng-template #renderChildren let-children>
+        <ng-container *ngFor="let child of children">
+          <div class="mega-subgroup">
+            <strong>
+              <a
+                [routerLink]="['/products']"
+                [queryParams]="{ categoryId: child.id }"
+              >
+                {{ child.name }}
+              </a>
+            </strong>
+
+            <ul class="list-unstyled">
+              <li *ngFor="let sub of child.children">
+                <a
+                  [routerLink]="['/products']"
+                  [queryParams]="{ categoryId: sub.id }"
+                >
+                  {{ sub.name }}
+                </a>
+
+                <!-- 👇 Split into two containers -->
+                <ng-container *ngIf="sub.children?.length">
+                  <ng-container
+                    *ngTemplateOutlet="
+                      renderChildren;
+                      context: { $implicit: sub.children }
+                    "
+                  ></ng-container>
+                </ng-container>
+              </li>
+            </ul>
+          </div>
+        </ng-container>
+      </ng-template>
 
       <!-- RIGHT SIDE -->
       <ul class="navbar-nav ms-auto align-items-center">
