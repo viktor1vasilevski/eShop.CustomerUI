@@ -38,7 +38,7 @@ export class ProductDetailsComponent implements OnInit {
   userId: string | null = '';
   product: any = '';
   quantity = 1;
-  comments: Comment[] = [];
+  //comments: Comment[] = [];
 
   commentRequest: CommentRequest = {
     productId: '',
@@ -54,6 +54,27 @@ export class ProductDetailsComponent implements OnInit {
   currentPage: number = 1;
   totalCount: number = 0;
   totalPages: number[] = [];
+
+  comments = [
+    {
+      createdBy: 'Alice',
+      created: new Date('2025-09-20T14:35:00'),
+      commentText: 'Great shoes! Very comfortable and stylish.',
+      rating: 5,
+    },
+    {
+      createdBy: 'Bob',
+      created: new Date('2025-09-22T10:15:00'),
+      commentText: 'Quality is decent, but runs a little small.',
+      rating: 3,
+    },
+    {
+      createdBy: 'Charlie',
+      created: new Date('2025-09-25T19:50:00'),
+      commentText: 'Arrived quickly, good value for the price.',
+      rating: 4,
+    },
+  ];
 
   constructor(
     private route: ActivatedRoute,
