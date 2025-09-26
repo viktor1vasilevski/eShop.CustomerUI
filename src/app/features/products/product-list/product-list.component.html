@@ -1,36 +1,41 @@
-<div class="container my-4">
-  <div class="row">
-    <div class="col-md-3 mb-4" *ngFor="let product of products">
-      <div class="card h-100">
-        <!-- Product Image -->
-        <a [routerLink]="['/products', product.id]">
+<div class="container my-5">
+  <div class="row g-4">
+    <div
+      class="col-12 col-sm-6 col-md-4 col-lg-3"
+      *ngFor="let product of products"
+    >
+      <div class="card h-100 product-card">
+        <!-- Product Image with overlay -->
+        <a
+          [routerLink]="['/products', product.id]"
+          class="product-image-wrapper"
+        >
           <img
             *ngIf="product.image"
             [src]="product.image"
-            class="card-img-top"
+            class="card-img-top product-image"
             alt="{{ product.name }}"
           />
+          <div class="overlay">View Details</div>
         </a>
 
         <!-- Card Body -->
         <div class="card-body d-flex flex-column">
-          <!-- Product Name Box -->
-          <div class="product-name-box">
+          <!-- Product Name -->
+          <h5 class="product-name text-truncate mb-3">
             {{ product.name }}
-          </div>
+          </h5>
 
-          <div class="mt-auto">
-            <!-- Product Info Box -->
-            <div class="product-info-box">
-              <p class="mb-1">
-                <strong>Price:</strong> {{ product.unitPrice | currency }}
-              </p>
-              <p class="mb-0">
-                <strong>Category:</strong> {{ product.category }} /
-                {{ product.subcategory }}
-              </p>
-            </div>
-          </div>
+          <!-- Product Info -->
+          <p class="mb-2">
+            <strong>Price:</strong> {{ product.price | currency }}
+          </p>
+          <p class="text-muted mb-0">
+            <strong>Category:</strong> {{ product.category }}
+            <span *ngIf="product.subcategory">
+              / {{ product.subcategory }}
+            </span>
+          </p>
         </div>
       </div>
     </div>

@@ -72,15 +72,15 @@ export class ProductDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProductById();
-    this.loadComments();
+    //this.loadComments();
   }
 
   loadProductById() {
     this.userId = this._authService.getUserId();
-    this._productService.getProductById(this.productId, this.userId).subscribe({
+    this._productService.getProductById(this.productId).subscribe({
       next: (response: any) => {
         this.product = response.data;
-        this.canComment = response.data.canComment;
+        //this.canComment = response.data.canComment;
       },
       error: (errorResponse: any) => {
         this._errorHandlerService.handleErrors(errorResponse);

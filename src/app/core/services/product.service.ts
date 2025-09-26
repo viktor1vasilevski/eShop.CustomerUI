@@ -22,12 +22,8 @@ export class ProductService {
     return this._dataApiService.getAll<any>(url, params);
   }
 
-  getProductById(id: string, userId: string | null): Observable<any> {
+  getProductById(id: string): Observable<any> {
     let params = new HttpParams();
-    if (userId) {
-      params = params.set('userId', userId);
-    }
-
     const url = `${this.baseUrl}/product/${id}`;
     return this._dataApiService.getById<any>(url, { params });
   }
