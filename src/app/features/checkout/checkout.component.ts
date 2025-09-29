@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BasketStorageService } from '../../core/services/basket.storage.service';
+import { AuthStorageService } from '../../core/services/auth.storage.service';
 
 @Component({
   selector: 'app-checkout',
@@ -18,13 +20,14 @@ export class CheckoutComponent implements OnInit {
 
   constructor(
     private _basketService: BasketService,
+    private _basketStorageService: BasketStorageService,
     private _orderService: OrderService,
-    private _authService: AuthService,
+    private _authStorageService: AuthStorageService,
     private _router: Router
   ) {}
 
   ngOnInit(): void {
-    this.basketItems = this._basketService.getLocalBasketItems();
+    this.basketItems = this._basketStorageService.getLocalBasketItems();
     this.calculateTotal();
   }
 
@@ -36,7 +39,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   onPay() {
-    const userId = this._authService.getUserId();
+    const userId = this._authStorageService.getUserId();
     const placeOrderRequest = {
       userId: userId,
       totalAmount: this.totalPrice,
@@ -51,7 +54,7 @@ export class CheckoutComponent implements OnInit {
       next: (response) => {
         this._basketService.clearBackendBasket(userId).subscribe({
           next: () => {
-            this._basketService.clearLocalBasket();
+            this._basketStorageService.clearLocalBasket();
             this._router.navigate(['/home']);
           },
           error: (errorResponse: any) => {},

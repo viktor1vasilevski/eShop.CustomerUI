@@ -14,6 +14,8 @@ import { NotificationService } from '../../core/services/notification.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BasketService } from '../../core/services/basket.service';
 import { NotificationType } from '../../core/enums/notification-type.enum';
+import { BasketStorageService } from '../../core/services/basket.storage.service';
+import { AuthStorageService } from '../../core/services/auth.storage.service';
 
 declare var bootstrap: any;
 
@@ -35,9 +37,11 @@ export class LoginComponent {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private _authService: AuthService,
+    private _authStorageService: AuthStorageService,
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService,
     private _basketService: BasketService,
+    private _basketStorageService: BasketStorageService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -67,15 +71,18 @@ export class LoginComponent {
           response.notificationType,
           response.message
         );
-
+        debugger;
         let userId = response.data.id;
-        this._authService.saveUser(response.data);
-        this._authService.isCusLoggedIn(true);
+        this._authStorageService.saveUser(response.data);
+        this._authStorageService.isCusLoggedIn(true);
 
-        const localItems = this._basketService.getLocalBasketItems();
+        const localItems = this._basketStorageService.getLocalBasketItems();
         if (localItems.length > 0) {
-          this.mergeBasket(userId, localItems);
-          this._notificationService.notify(NotificationType.Info, 'baslet items merged!');
+          this.updateUserBasket(userId, localItems);
+          this._notificationService.notify(
+            NotificationType.Info,
+            'baslet items merged!'
+          );
         } else {
           this.loadBackendBasket(userId);
         }
@@ -91,30 +98,32 @@ export class LoginComponent {
   private loadBackendBasket(userId: string) {
     this._basketService.getBasketByUserId(userId).subscribe({
       next: (basketResponse: any) => {
-        this._basketService.setBasketItems(basketResponse.data.items || []);
+        this._basketStorageService.setBasketItems(
+          basketResponse.data.items || []
+        );
         this.isSubmitting = false;
         this.router.navigate(['/home']);
       },
       error: () => {
-        this._basketService.setBasketItems([]);
+        this._basketStorageService.setBasketItems([]);
         this.isSubmitting = false;
         this.router.navigate(['/home']);
       },
     });
   }
 
-  private mergeBasket(userId: string, localItems: any) {
-    this._basketService
-      .mergeUserBasketWithLocalBasketItems(userId, localItems)
-      .subscribe({
-        next: () => {
-          this.loadBackendBasket(userId);
-          this.isSubmitting = false;
-          this.router.navigate(['/home']);
-        },
-        error: () => {
-          this.loadBackendBasket(userId);
-        },
-      });
+  private updateUserBasket(userId: string, localItems: any) {
+    const request = { items: localItems };
+
+    this._basketService.updateUserBasket(userId, request).subscribe({
+      next: () => {
+        this.loadBackendBasket(userId);
+        this.isSubmitting = false;
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        this.loadBackendBasket(userId);
+      },
+    });
   }
 }

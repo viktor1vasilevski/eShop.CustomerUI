@@ -6,6 +6,7 @@ import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthStorageService } from '../../core/services/auth.storage.service';
 
 @Component({
   selector: 'app-orders',
@@ -22,6 +23,7 @@ export class OrdersComponent implements OnInit {
     private _orderService: OrderService,
     private _basketService: BasketService,
     private _authService: AuthService,
+    private _authStorageService: AuthStorageService,
     private _errorHandlerService: ErrorHandlerService,
     private _notificationService: NotificationService
   ) {}
@@ -35,8 +37,7 @@ export class OrdersComponent implements OnInit {
   }
 
   loadOrderForUser() {
-    debugger;
-    this.userId = this._authService.getUserId();
+    this.userId = this._authStorageService.getUserId();
     this._orderService.getOrdersForUser(this.userId).subscribe({
       next: (response: any) => {
         this.orders = response.data;

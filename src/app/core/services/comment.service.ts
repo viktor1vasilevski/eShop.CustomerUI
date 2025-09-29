@@ -3,6 +3,7 @@ import { DataService } from './data.service';
 import { Observable } from 'rxjs';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { AuthStorageService } from './auth.storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,8 @@ export class CommentService {
 
   constructor(
     private _dataApiService: DataService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _authStorageService: AuthStorageService
   ) {}
 
   getComments(request: any): Observable<any> {
@@ -28,7 +30,7 @@ export class CommentService {
   }
 
   createComment(request: any): Observable<any> {
-    const token = this._authService.getToken();
+    const token = this._authStorageService.getToken();
     let headers = new HttpHeaders();
 
     if (token) {

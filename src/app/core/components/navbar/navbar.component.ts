@@ -7,6 +7,8 @@ import { NotificationService } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { BasketService } from '../../services/basket.service';
+import { BasketStorageService } from '../../services/basket.storage.service';
+import { AuthStorageService } from '../../services/auth.storage.service';
 
 @Component({
   selector: 'app-navbar',
@@ -27,7 +29,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _categoryService: CategoryService,
     private _errorHandlerService: ErrorHandlerService,
     private _authService: AuthService,
-    private _basketService: BasketService
+    private _authStorageService: AuthStorageService,
+    private _notificationService: NotificationService,
+    private _basketService: BasketService,
+    private _basketStorageService: BasketStorageService
   ) {}
 
   ngOnDestroy(): void {
@@ -37,18 +42,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadCategoriesWithSubcategoriesForMenu();
-    this._authService.currentUser$.subscribe((user) => {
+    this._authStorageService.currentUser$.subscribe((user) => {
       this.userEmail = user?.email || null;
     });
 
-    this._basketService.distinctItemCount$.subscribe((count) => {
+    this._basketStorageService.distinctItemCount$.subscribe((count) => {
       this.basketItemCount = count;
     });
 
-    debugger;
-
-    this._authService.isCustomerLoggedIn$.subscribe((status) => {
-      debugger;
+    this._authStorageService.isCustomerLoggedIn$.subscribe((status) => {
       this.isCustomerLoggedIn = status;
     });
   }
@@ -66,7 +68,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this._authService.logout();
-    this._basketService.clearLocalBasket();
+    this._authStorageService.logout();
+    this._basketStorageService.clearLocalBasket();
   }
 }

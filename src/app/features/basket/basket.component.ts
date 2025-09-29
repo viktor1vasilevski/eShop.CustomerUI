@@ -5,6 +5,9 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { BasketService } from '../../core/services/basket.service';
 import { AuthService } from '../../core/services/auth.service';
+import { BasketStorageService } from '../../core/services/basket.storage.service';
+import { AuthStorageService } from '../../core/services/auth.storage.service';
+import { ErrorHandlerService } from '../../core/services/error-handler.service';
 declare var bootstrap: any;
 
 @Component({
@@ -22,15 +25,19 @@ export class BasketComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private _basketService: BasketService,
-    private _authService: AuthService
+    private _authService: AuthService,
+    private _authStorageService: AuthStorageService,
+    private _basketStorageService: BasketStorageService,
+    private _errorHandlerService: ErrorHandlerService
   ) {}
 
   ngOnInit() {
     // hydrate from storage if needed
     //this._basketService.loadBasketFromStorage();
 
-    this.subscription = this._basketService.basketItems$.subscribe(
+    this.subscription = this._basketStorageService.basketItems$.subscribe(
       (items: any[]) => {
+        debugger;
         this.basketItems = items;
         this.calculateTotal();
       }
@@ -42,18 +49,18 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   clearBasket(): void {
-    if (this._authService.isLoggedIn()) {
-      const userId = this._authService.getUserId();
+    if (this._authStorageService.isLoggedIn()) {
+      const userId = this._authStorageService.getUserId();
       this._basketService.clearBackendBasket(userId).subscribe({
         next: (response: any) => {
-          this._basketService.clearLocalBasket();
+          this._basketStorageService.clearLocalBasket();
         },
         error: (errorResponse: any) => {
           console.log(errorResponse);
         },
       });
     } else {
-      this._basketService.clearLocalBasket();
+      this._basketStorageService.clearLocalBasket();
     }
   }
 
@@ -65,10 +72,11 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   removeItem(item: any): void {
-    this._basketService.removeItem(item.productId);
+    //this._basketService.removeItem(item.productId);
   }
 
   updateQuantity(item: any, change: number): void {
+    debugger;
     if (
       (change === -1 && item.quantity <= 1) ||
       (change === 1 && item.quantity >= item.unitQuantity)
@@ -76,28 +84,29 @@ export class BasketComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this._authService.isLoggedIn()) {
-      const userId = this._authService.getUserId();
-      this._basketService
-        .updateItemQuantity(userId, item.productId, change)
-        .subscribe({
-          next: () => {
-            this._basketService.getBasketByUserId(userId).subscribe({
-              next: (response: any) => {
-                this._basketService.setBasketItems(response.data.items);
-              },
-              error: (errorResponse: any) => {
-                console.log(errorResponse);
-                
-              }
-            })
-
-
-          },
-          error: (err: any) => console.error(err),
-        });
+    if (this._authStorageService.isLoggedIn()) {
+      const userId = this._authStorageService.getUserId();
+      const basketItem = { productId: item.productId, quantity: change };
+      const request = {
+        items: [basketItem],
+      };
+      this._basketService.updateUserBasket(userId, request).subscribe({
+        next: () => {
+          this._basketService.getBasketByUserId(userId).subscribe({
+            next: (response: any) => {
+              this._basketStorageService.setBasketItems(response.data.items);
+            },
+            error: (errorResponse: any) =>
+              this._errorHandlerService.handleErrors(errorResponse),
+          });
+        },
+        error: (err: any) => console.error(err),
+      });
     } else {
-      this._basketService.updateLocalItemQuantity(item.productId, change);
+      this._basketStorageService.updateLocalItemQuantity(
+        item.productId,
+        change
+      );
     }
   }
 

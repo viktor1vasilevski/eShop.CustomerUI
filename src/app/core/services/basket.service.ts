@@ -18,81 +18,17 @@ export interface BasketItem {
 })
 export class BasketService {
   private baseUrl = 'https://localhost:44366/api';
-  private readonly storageKey = 'basket';
 
-  private _basketItems = new BehaviorSubject<BasketItem[]>(
-    this.loadFromStorage()
-  );
-  basketItems$ = this._basketItems.asObservable();
-  distinctItemCount$ = this.basketItems$.pipe(map((items) => items.length));
+  constructor(private _dataApiService: DataService) {}
 
-  constructor(
-    private _dataApiService: DataService,
-    private _authService: AuthService
-  ) {}
-
-  removeItem(productId: any): void {
-    if (this._authService.isLoggedIn()) {
-      const userId = this._authService.getUserId();
-      this.removeItemFromBackend(userId, productId).subscribe({
-        next: (response: any) => {
-          this.getBasketByUserId(userId).subscribe({
-            next: (response: any) => {
-              this.setBasketItems(response.data.items);
-            },
-            error: (errorResponse: any) => {
-
-            }
-          })
-        },
-        error: (errorResponse: any) => {
-          console.log(errorResponse);
-        },
-      });
-    } else {
-      const items = this.loadFromStorage().filter(
-        (i: any) => i.productId !== productId
-      );
-      this.persist(items);
-    }
-  }
-
-  // --- backend fetch ---
   getBasketByUserId(userId: string | null): Observable<any[]> {
     return this._dataApiService.getById(`${this.baseUrl}/basket/${userId}`);
   }
 
-  // --- local / reactive management ---
-  private loadFromStorage(): BasketItem[] {
-    const basket = localStorage.getItem(this.storageKey);
-    if (basket) {
-      try {
-        return JSON.parse(basket) as BasketItem[];
-      } catch {
-        console.warn('Failed to parse basket from localStorage, resetting.');
-        localStorage.removeItem(this.storageKey);
-      }
-    }
-    return [];
-  }
-
-  private persist(items: BasketItem[]): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(items));
-    this._basketItems.next(items);
-  }
-
-  setBasketItems(items: BasketItem[]): void {
-    this.persist(items);
-  }
-
-  getLocalBasketItems(): BasketItem[] {
-    return this.loadFromStorage();
-  }
-
-  mergeUserBasketWithLocalBasketItems(userId: string | null, items: BasketItem[]): Observable<void> {
+  updateUserBasket(userId: string | null, request: any): Observable<void> {
     return this._dataApiService.post(
       `${this.baseUrl}/basket/${userId}/merge`,
-      items
+      request
     );
   }
 
@@ -105,24 +41,6 @@ export class BasketService {
       `${this.baseUrl}/basket/${userId}/items/${productId}`,
       { quantity }
     );
-  }
-
-  updateLocalItemQuantity(productId: any, change: number): void {
-    const items = this.loadFromStorage();
-    const existing = items.find((i: any) => i.productId === productId);
-
-    if (existing) {
-      const newQuantity = existing.quantity + change;
-      if (newQuantity < 1 || newQuantity > existing.unitQuantity) return;
-
-      existing.quantity = newQuantity;
-      this.persist(items);
-    }
-  }
-
-  clearLocalBasket(): void {
-    localStorage.removeItem(this.storageKey);
-    this._basketItems.next([]);
   }
 
   clearBackendBasket(userId: string | null): Observable<any> {
@@ -138,32 +56,5 @@ export class BasketService {
     return this._dataApiService.delete<any>(
       `${this.baseUrl}/basket/${userId}/items/${productId}`
     );
-  }
-
-  addLocalItem(item: BasketItem): void {
-    const items = this.loadFromStorage();
-    const existing = items.find((i) => i.productId === item.productId);
-
-    if (existing) {
-      existing.quantity = Math.min(
-        existing.quantity + item.quantity,
-        item.unitQuantity
-      );
-    } else {
-      items.push(item);
-    }
-
-    this.persist(items);
-  }
-
-  updateLocalItem(item: BasketItem): void {
-    const items = this.loadFromStorage();
-    const existing = items.find((i) => i.productId === item.productId);
-    if (existing) {
-    } else {
-      items.push(item);
-    }
-
-    this.persist(items);
   }
 }

@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 import { CommentService } from '../../../core/services/comment.service';
 import { SortOrder } from '../../../core/enums/sort-order.enum';
 import { PaginationComponent } from '../../../core/components/pagination/pagination.component';
+import { BasketStorageService } from '../../../core/services/basket.storage.service';
+import { AuthStorageService } from '../../../core/services/auth.storage.service';
 
 export interface CommentRequest {
   productId: string;
@@ -80,10 +82,12 @@ export class ProductDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private _productService: ProductService,
     private _authService: AuthService,
+    private _authStorageService: AuthStorageService,
     private _basketService: BasketService,
     private _commentService: CommentService,
     private _notificationService: NotificationService,
-    private _errorHandlerService: ErrorHandlerService
+    private _errorHandlerService: ErrorHandlerService,
+    private _basketStorageService: BasketStorageService
   ) {
     this.route.params.subscribe((params) => {
       this.productId = params['id'];
@@ -97,7 +101,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   loadProductById() {
-    this.userId = this._authService.getUserId();
+    this.userId = this._authStorageService.getUserId();
     this._productService.getProductById(this.productId).subscribe({
       next: (response: any) => {
         this.product = response.data;
@@ -136,39 +140,40 @@ export class ProductDetailsComponent implements OnInit {
     const basketItem = {
       productId: this.product.id,
       name: this.product.name,
-      price: this.product.unitPrice,
+      price: this.product.price,
       quantity: this.quantity,
       unitQuantity: this.product.unitQuantity,
       image: this.product.image,
     };
+    debugger;
+    if (this._authStorageService.isLoggedIn()) {
+      const userId = this._authStorageService.getUserId();
+      const item = {
+        productId: basketItem.productId,
+        quantity: basketItem.quantity,
+      };
+      const request = { items: [item] };
 
-    if (this._authService.isLoggedIn()) {
-      const userId = this._authService.getUserId();
-      this._basketService
-        .updateItemQuantity(userId, basketItem.productId, basketItem.quantity)
-        .subscribe({
-          next: () => {
-            this._notificationService.notify(
-              NotificationType.Success,
-              'item added'
-            );
+      this._basketService.updateUserBasket(userId, request).subscribe({
+        next: () => {
+          this._notificationService.notify(
+            NotificationType.Success,
+            'item added'
+          );
 
-            this._basketService.getBasketByUserId(userId).subscribe({
-              next: (response: any) => {
-                this._basketService.setBasketItems(response.data.items);
-              },
-              error: (errorResponse: any) => {
-                console.log(errorResponse);
-              },
-            });
-          },
-          error: (errorResponse: any) => {
-            console.error('Error adding item:', errorResponse);
-          },
-        });
+          this._basketService.getBasketByUserId(userId).subscribe({
+            next: (response: any) => {
+              this._basketStorageService.setBasketItems(response.data.items);
+            },
+            error: (errorResponse: any) =>
+              this._errorHandlerService.handleErrors(errorResponse),
+          });
+        },
+        error: (errorResponse: any) =>
+          this._errorHandlerService.handleErrors(errorResponse),
+      });
     } else {
-      // Not logged in — keep items locally
-      this._basketService.addLocalItem(basketItem);
+      this._basketStorageService.addLocalItem(basketItem);
       this._notificationService.notify(NotificationType.Success, 'item added');
     }
   }
