@@ -62,49 +62,42 @@ export class LoginComponent {
 
     if (this.loginForm.invalid) {
       this.isSubmitting = false;
+      this._notificationService.notify(
+        NotificationType.Error,
+        'Invalid form data. Please check your inputs and try again.'
+      );
       return;
     }
 
     this._authService.login(this.loginForm.value).subscribe({
-      next: (response: any) => {
-        this._notificationService.notify(
-          response.notificationType,
-          response.message
-        );
-        debugger;
-        let userId = response.data.id;
-        this._authStorageService.saveUser(response.data);
+      next: (res: any) => {
+        this._notificationService.notify(res.status, res.message);
+        const userId = res.data.id;
+        this._authStorageService.saveUser(res.data);
         this._authStorageService.isCusLoggedIn(true);
-
         const localItems = this._basketStorageService.getLocalBasketItems();
         if (localItems.length > 0) {
           this.updateUserBasket(userId, localItems);
-          this._notificationService.notify(
-            NotificationType.Info,
-            'baslet items merged!'
-          );
         } else {
-          this.loadBackendBasket(userId);
+          this.loadUserBasket(userId);
         }
       },
-      error: (errorResponse: any) => {
+      error: (err: any) => {
         this.isSubmitting = false;
-        this._errorHandlerService.handleErrors(errorResponse);
+        this._errorHandlerService.handleErrors(err);
       },
     });
   }
 
-  // helper for backend-only load
-  private loadBackendBasket(userId: string) {
+  private loadUserBasket(userId: string) {
     this._basketService.getBasketByUserId(userId).subscribe({
-      next: (basketResponse: any) => {
-        this._basketStorageService.setBasketItems(
-          basketResponse.data.items || []
-        );
+      next: (res: any) => {
+        this._basketStorageService.setBasketItems(res.data.items || []);
         this.isSubmitting = false;
         this.router.navigate(['/home']);
       },
-      error: () => {
+      error: (err: any) => {
+        this._errorHandlerService.handleErrors(err);
         this._basketStorageService.setBasketItems([]);
         this.isSubmitting = false;
         this.router.navigate(['/home']);
@@ -114,16 +107,14 @@ export class LoginComponent {
 
   private updateUserBasket(userId: string, localItems: any) {
     const request = { items: localItems };
-
     this._basketService.updateUserBasket(userId, request).subscribe({
-      next: () => {
-        this.loadBackendBasket(userId);
+      next: (res: any) => {
+        this.loadUserBasket(userId);
         this.isSubmitting = false;
         this.router.navigate(['/home']);
+        this._notificationService.notify(res.status, res.message);
       },
-      error: () => {
-        this.loadBackendBasket(userId);
-      },
+      error: (err: any) => this._errorHandlerService.handleErrors(err),
     });
   }
 }

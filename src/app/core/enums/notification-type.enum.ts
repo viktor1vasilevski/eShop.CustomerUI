@@ -1,5 +1,5 @@
 export enum NotificationType {
   Success = 0,
-  ServerError = 1,
-  Info = 2
+  Error = 1,
+  Info = 2,
 }

@@ -32,16 +32,16 @@ export class BasketService {
     );
   }
 
-  updateItemQuantity(
-    userId: string | null,
-    productId: string,
-    quantity: number
-  ): Observable<void> {
-    return this._dataApiService.patch<void>(
-      `${this.baseUrl}/basket/${userId}/items/${productId}`,
-      { quantity }
-    );
-  }
+  // updateItemQuantity(
+  //   userId: string | null,
+  //   productId: string,
+  //   quantity: number
+  // ): Observable<void> {
+  //   return this._dataApiService.patch<void>(
+  //     `${this.baseUrl}/basket/${userId}/items/${productId}`,
+  //     { quantity }
+  //   );
+  // }
 
   clearBackendBasket(userId: string | null): Observable<any> {
     return this._dataApiService.delete<any>(

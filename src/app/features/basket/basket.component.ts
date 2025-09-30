@@ -8,6 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { BasketStorageService } from '../../core/services/basket.storage.service';
 import { AuthStorageService } from '../../core/services/auth.storage.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
+import { NotificationService } from '../../core/services/notification.service';
 declare var bootstrap: any;
 
 @Component({
@@ -28,7 +29,8 @@ export class BasketComponent implements OnInit, OnDestroy {
     private _authService: AuthService,
     private _authStorageService: AuthStorageService,
     private _basketStorageService: BasketStorageService,
-    private _errorHandlerService: ErrorHandlerService
+    private _errorHandlerService: ErrorHandlerService,
+    private _notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -53,11 +55,11 @@ export class BasketComponent implements OnInit, OnDestroy {
       const userId = this._authStorageService.getUserId();
       this._basketService.clearBackendBasket(userId).subscribe({
         next: (response: any) => {
+          this._notificationService.notify(response.status, response.message);
           this._basketStorageService.clearLocalBasket();
         },
-        error: (errorResponse: any) => {
-          console.log(errorResponse);
-        },
+        error: (errorResponse: any) =>
+          this._errorHandlerService.handleErrors(errorResponse),
       });
     } else {
       this._basketStorageService.clearLocalBasket();
@@ -72,11 +74,28 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   removeItem(item: any): void {
-    //this._basketService.removeItem(item.productId);
+    if (this._authStorageService.isLoggedIn()) {
+      const userId = this._authStorageService.getUserId();
+      this._basketService
+        .removeItemFromBackend(userId, item.productId)
+        .subscribe({
+          next: (res: any) => {
+            this._notificationService.notify(res.status, res.message);
+            this._basketService.getBasketByUserId(userId).subscribe({
+              next: (res: any) => {
+                this._basketStorageService.setBasketItems(res.data.items);
+              },
+              error: (err: any) => this._errorHandlerService.handleErrors(err),
+            });
+          },
+          error: (err: any) => this._errorHandlerService.handleErrors(err),
+        });
+    } else {
+      this._basketStorageService.updateLocalItem(item.productId);
+    }
   }
 
   updateQuantity(item: any, change: number): void {
-    debugger;
     if (
       (change === -1 && item.quantity <= 1) ||
       (change === 1 && item.quantity >= item.unitQuantity)
@@ -96,11 +115,10 @@ export class BasketComponent implements OnInit, OnDestroy {
             next: (response: any) => {
               this._basketStorageService.setBasketItems(response.data.items);
             },
-            error: (errorResponse: any) =>
-              this._errorHandlerService.handleErrors(errorResponse),
+            error: (err: any) => this._errorHandlerService.handleErrors(err),
           });
         },
-        error: (err: any) => console.error(err),
+        error: (err: any) => this._errorHandlerService.handleErrors(err),
       });
     } else {
       this._basketStorageService.updateLocalItemQuantity(

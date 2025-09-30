@@ -31,7 +31,7 @@ export class NotificationService {
     return this.showToast('error', 'Error', message, options);
   }
 
-    private info(message: string | null | undefined, options = {}) {
+  private info(message: string | null | undefined, options = {}) {
     return this.showToast('info', 'Info', message, options);
   }
 
@@ -43,7 +43,7 @@ export class NotificationService {
     switch (type) {
       case NotificationType.Success:
         return this.success(message, options);
-      case NotificationType.ServerError:
+      case NotificationType.Error:
         return this.error(message, options);
       case NotificationType.Info:
         return this.info(message, options);

@@ -15,7 +15,7 @@ export class ErrorHandlerService {
         if (errors.hasOwnProperty(field)) {
           errors[field].forEach((message: string) => {
             this._notificationService.notify(
-              NotificationType.ServerError,
+              NotificationType.Error,
               `${field}: ${message}`,
               {
                 timeOut: 4500,
@@ -27,12 +27,12 @@ export class ErrorHandlerService {
       }
     } else if (errorResponse?.error?.message) {
       this._notificationService.notify(
-        NotificationType.ServerError,
+        NotificationType.Error,
         errorResponse.error.message
       );
     } else {
       this._notificationService.notify(
-        NotificationType.ServerError,
+        NotificationType.Error,
         'An unexpected error occurred.'
       );
     }

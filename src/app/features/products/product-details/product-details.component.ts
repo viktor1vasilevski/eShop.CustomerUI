@@ -31,7 +31,7 @@ export interface Comment {
 
 @Component({
   selector: 'app-product-details',
-  imports: [FormsModule, CommonModule, PaginationComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
 })
