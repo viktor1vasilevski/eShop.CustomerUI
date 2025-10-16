@@ -5,8 +5,6 @@ import { CommonModule } from '@angular/common';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 
 export interface ProductRequest {
-  unitPrice: number;
-  subcategoryId: string;
   categoryId: string;
   skip: number;
   take: number;
@@ -21,8 +19,6 @@ export interface ProductRequest {
 export class ProductListComponent implements OnInit {
   productRequest: ProductRequest = {
     categoryId: '',
-    subcategoryId: '',
-    unitPrice: 0,
     skip: 0,
     take: 10,
   };
@@ -37,16 +33,10 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      // Reset request
+      debugger;
       this.productRequest.categoryId = '';
-      this.productRequest.subcategoryId = '';
-      this.productRequest.unitPrice = 0;
       this.productRequest.skip = 0;
       this.productRequest.take = 10;
-
-      if (params['subcategoryId']) {
-        this.productRequest.subcategoryId = params['subcategoryId'];
-      }
 
       if (params['categoryId']) {
         this.productRequest.categoryId = params['categoryId'];
@@ -57,6 +47,7 @@ export class ProductListComponent implements OnInit {
   }
 
   loadProducts() {
+    debugger;
     this._productService.getProducts(this.productRequest).subscribe({
       next: (response: any) => {
         this.products = response.data;

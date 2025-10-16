@@ -123,7 +123,6 @@ export class ProductDetailsComponent implements OnInit {
       unitQuantity: this.product.unitQuantity,
       image: this.product.image,
     };
-    debugger;
     if (this._authStorageService.isLoggedIn()) {
       const userId = this._authStorageService.getUserId();
       const item = {
@@ -177,9 +176,11 @@ export class ProductDetailsComponent implements OnInit {
       );
       return;
     }
-    let request = {
+
+    let userId = this._authStorageService.getUserId();
+    const request = {
       productId: this.productId,
-      userId: this.userId,
+      userId: userId,
       commentText: this.newCommentText,
       rating: this.newCommentRating,
     };
@@ -190,9 +191,8 @@ export class ProductDetailsComponent implements OnInit {
         this.newCommentText = '';
         this.newCommentRating = 0;
       },
-      error: (errorResponse: any) => {
-        console.log(errorResponse);
-      },
+      error: (errorResponse: any) =>
+        this._errorHandlerService.handleErrors(errorResponse),
     });
   }
 }

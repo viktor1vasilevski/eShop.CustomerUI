@@ -39,7 +39,6 @@ export class BasketComponent implements OnInit, OnDestroy {
 
     this.subscription = this._basketStorageService.basketItems$.subscribe(
       (items: any[]) => {
-        debugger;
         this.basketItems = items;
         this.calculateTotal();
       }

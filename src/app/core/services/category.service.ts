@@ -6,7 +6,7 @@ import { DataService } from './data.service';
   providedIn: 'root',
 })
 export class CategoryService {
-  private baseUrl = 'https://localhost:44366/api';
+  private baseUrl = 'https://localhost:44344/api';
   constructor(private _dataApiService: DataService) {}
 
   getCategoriesWithSubcategoriesForMenu(): Observable<any> {

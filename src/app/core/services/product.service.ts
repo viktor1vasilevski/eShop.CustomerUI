@@ -7,14 +7,12 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ProductService {
-  private baseUrl = 'https://localhost:44366/api';
+  private baseUrl = 'https://localhost:44344/api';
   constructor(private _dataApiService: DataService) {}
 
   getProducts(request: any): Observable<any> {
     const params = new HttpParams()
       .set('categoryId', request.categoryId)
-      .set('subcategoryId', request.subcategoryId)
-      .set('unitPrice', request.unitPrice)
       .set('skip', request.skip.toString())
       .set('take', request.take.toString());
 
