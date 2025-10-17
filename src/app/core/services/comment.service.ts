@@ -9,7 +9,7 @@ import { AuthStorageService } from './auth.storage.service';
   providedIn: 'root',
 })
 export class CommentService {
-  private baseUrl = 'https://localhost:44366/api';
+  private baseUrl = 'https://localhost:44344/api';
 
   constructor(
     private _dataApiService: DataService,

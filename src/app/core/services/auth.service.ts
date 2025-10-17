@@ -1,13 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'https://localhost:44366/api';
+  private baseUrl = 'https://localhost:44344/api';
 
   constructor(private http: HttpClient) {}
 

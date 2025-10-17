@@ -1,11 +1,16 @@
 .product-card {
+  background: linear-gradient(180deg, #fefefe 0%, #f4f6f9 100%);
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid #3b82f6;
   border-radius: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  background: linear-gradient(180deg, #f9fbfd 0%, #f1f5f9 100%);
 }
 
 .product-image-wrapper {

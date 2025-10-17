@@ -33,7 +33,6 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      debugger;
       this.productRequest.categoryId = '';
       this.productRequest.skip = 0;
       this.productRequest.take = 10;
@@ -47,7 +46,6 @@ export class ProductListComponent implements OnInit {
   }
 
   loadProducts() {
-    debugger;
     this._productService.getProducts(this.productRequest).subscribe({
       next: (response: any) => {
         this.products = response.data;
