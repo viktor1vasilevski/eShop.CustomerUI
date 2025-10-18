@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DataService } from './data.service';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { AuthService } from './auth.service';
+import { Observable } from 'rxjs';
 
 export interface BasketItem {
   productId: string;
@@ -17,7 +15,7 @@ export interface BasketItem {
   providedIn: 'root',
 })
 export class BasketService {
-  private baseUrl = 'https://localhost:44366/api';
+  private baseUrl = 'https://localhost:44344/api';
 
   constructor(private _dataApiService: DataService) {}
 

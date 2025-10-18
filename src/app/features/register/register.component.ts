@@ -49,12 +49,8 @@ export class RegisterComponent {
     }
     this.isSubmitting = true;
     this._authService.register(this.registerForm.value).subscribe({
-      next: (response: any) => {
-        console.log(response);
-      },
-      error: (errorResponse: any) => {
-        console.log(errorResponse);
-      },
+      next: (response: any) => {},
+      error: (errorResponse: any) => {},
     });
   }
 }

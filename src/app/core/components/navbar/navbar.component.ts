@@ -59,7 +59,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._categoryService.getCategoriesWithSubcategoriesForMenu().subscribe({
       next: (response: any) => {
         this.categories = response.data;
-        console.log(this.categories);
       },
       error: (errorResponse: any) => {
         this._errorHandlerService.handleErrors(errorResponse);
