@@ -182,9 +182,9 @@ export class ProductDetailsComponent implements OnInit {
       productId: this.productId,
       userId: userId,
       commentText: this.newCommentText,
-      rating: this.newCommentRating,
+      rating: Number(this.newCommentRating),
     };
-
+    debugger;
     this._commentService.createComment(request).subscribe({
       next: (response: any) => {
         this.comments.unshift(response.data);
