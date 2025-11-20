@@ -10,7 +10,6 @@ import { NotificationType } from '../../../core/enums/notification-type.enum';
 import { CommonModule } from '@angular/common';
 import { CommentService } from '../../../core/services/comment.service';
 import { SortOrder } from '../../../core/enums/sort-order.enum';
-import { PaginationComponent } from '../../../core/components/pagination/pagination.component';
 import { BasketStorageService } from '../../../core/services/basket.storage.service';
 import { AuthStorageService } from '../../../core/services/auth.storage.service';
 
@@ -131,14 +130,14 @@ export class ProductDetailsComponent implements OnInit {
       };
       const request = { items: [item] };
 
-      this._basketService.updateUserBasket(userId, request).subscribe({
+      this._basketService.updateUserBasket(request).subscribe({
         next: () => {
           this._notificationService.notify(
             NotificationType.Success,
             'item added'
           );
 
-          this._basketService.getBasketByUserId(userId).subscribe({
+          this._basketService.getBasketByUserId().subscribe({
             next: (response: any) => {
               this._basketStorageService.setBasketItems(response.data.items);
             },

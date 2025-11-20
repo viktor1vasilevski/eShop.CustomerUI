@@ -51,8 +51,7 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   clearBasket(): void {
     if (this._authStorageService.isLoggedIn()) {
-      const userId = this._authStorageService.getUserId();
-      this._basketService.clearBackendBasket(userId).subscribe({
+      this._basketService.clearBackendBasket().subscribe({
         next: (response: any) => {
           this._notificationService.notify(response.status, response.message);
           this._basketStorageService.clearLocalBasket();
@@ -75,20 +74,18 @@ export class BasketComponent implements OnInit, OnDestroy {
   removeItem(item: any): void {
     if (this._authStorageService.isLoggedIn()) {
       const userId = this._authStorageService.getUserId();
-      this._basketService
-        .removeItemFromBackend(userId, item.productId)
-        .subscribe({
-          next: (res: any) => {
-            this._notificationService.notify(res.status, res.message);
-            this._basketService.getBasketByUserId(userId).subscribe({
-              next: (res: any) => {
-                this._basketStorageService.setBasketItems(res.data.items);
-              },
-              error: (err: any) => this._errorHandlerService.handleErrors(err),
-            });
-          },
-          error: (err: any) => this._errorHandlerService.handleErrors(err),
-        });
+      this._basketService.removeItemFromBackend(item.productId).subscribe({
+        next: (res: any) => {
+          this._notificationService.notify(res.status, res.message);
+          this._basketService.getBasketByUserId().subscribe({
+            next: (res: any) => {
+              this._basketStorageService.setBasketItems(res.data.items);
+            },
+            error: (err: any) => this._errorHandlerService.handleErrors(err),
+          });
+        },
+        error: (err: any) => this._errorHandlerService.handleErrors(err),
+      });
     } else {
       this._basketStorageService.updateLocalItem(item.productId);
     }
@@ -108,9 +105,9 @@ export class BasketComponent implements OnInit, OnDestroy {
       const request = {
         items: [basketItem],
       };
-      this._basketService.updateUserBasket(userId, request).subscribe({
+      this._basketService.updateUserBasket(request).subscribe({
         next: () => {
-          this._basketService.getBasketByUserId(userId).subscribe({
+          this._basketService.getBasketByUserId().subscribe({
             next: (response: any) => {
               this._basketStorageService.setBasketItems(response.data.items);
             },

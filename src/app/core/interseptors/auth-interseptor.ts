@@ -6,7 +6,6 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from '../services/auth.service';
 import { AuthStorageService } from '../services/auth.storage.service';
 
 @Injectable()
@@ -16,6 +15,7 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const authStorageService = inject(AuthStorageService);
+    debugger;
     const token = authStorageService.getToken();
     if (token) {
       const cloned = req.clone({

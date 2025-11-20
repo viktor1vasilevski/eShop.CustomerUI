@@ -58,6 +58,7 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
+    debugger;
     this.isSubmitting = true;
 
     if (this.loginForm.invalid) {
@@ -72,14 +73,14 @@ export class LoginComponent {
     this._authService.login(this.loginForm.value).subscribe({
       next: (res: any) => {
         this._notificationService.notify(res.status, res.message);
-        const userId = res.data.id;
         this._authStorageService.saveUser(res.data);
         this._authStorageService.isCusLoggedIn(true);
         const localItems = this._basketStorageService.getLocalBasketItems();
+        debugger;
         if (localItems.length > 0) {
-          this.updateUserBasket(userId, localItems);
+          this.updateUserBasket(localItems);
         } else {
-          this.loadUserBasket(userId);
+          this.loadUserBasket();
         }
       },
       error: (err: any) => {
@@ -89,8 +90,8 @@ export class LoginComponent {
     });
   }
 
-  private loadUserBasket(userId: string) {
-    this._basketService.getBasketByUserId(userId).subscribe({
+  private loadUserBasket() {
+    this._basketService.getBasketByUserId().subscribe({
       next: (res: any) => {
         this._basketStorageService.setBasketItems(res.data.items || []);
         this.isSubmitting = false;
@@ -105,11 +106,11 @@ export class LoginComponent {
     });
   }
 
-  private updateUserBasket(userId: string, localItems: any) {
+  private updateUserBasket(localItems: any) {
     const request = { items: localItems };
-    this._basketService.updateUserBasket(userId, request).subscribe({
+    this._basketService.updateUserBasket(request).subscribe({
       next: (res: any) => {
-        this.loadUserBasket(userId);
+        this.loadUserBasket();
         this.isSubmitting = false;
         this.router.navigate(['/home']);
         this._notificationService.notify(res.status, res.message);

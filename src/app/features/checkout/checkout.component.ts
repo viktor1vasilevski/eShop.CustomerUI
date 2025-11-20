@@ -39,9 +39,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   onPay() {
-    const userId = this._authStorageService.getUserId();
     const placeOrderRequest = {
-      userId: userId,
       totalAmount: this.totalPrice,
       items: this.basketItems.map((item) => ({
         productId: item.productId,
@@ -52,7 +50,7 @@ export class CheckoutComponent implements OnInit {
 
     this._orderService.placeOrder(placeOrderRequest).subscribe({
       next: (response) => {
-        this._basketService.clearBackendBasket(userId).subscribe({
+        this._basketService.clearBackendBasket().subscribe({
           next: () => {
             this._basketStorageService.clearLocalBasket();
             this._router.navigate(['/home']);

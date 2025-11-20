@@ -19,40 +19,21 @@ export class BasketService {
 
   constructor(private _dataApiService: DataService) {}
 
-  getBasketByUserId(userId: string | null): Observable<any[]> {
-    return this._dataApiService.getById(`${this.baseUrl}/basket/${userId}`);
+  getBasketByUserId(): Observable<any[]> {
+    return this._dataApiService.getById(`${this.baseUrl}/basket`);
   }
 
-  updateUserBasket(userId: string | null, request: any): Observable<void> {
-    return this._dataApiService.post(
-      `${this.baseUrl}/basket/${userId}/merge`,
-      request
-    );
+  updateUserBasket(request: any): Observable<void> {
+    return this._dataApiService.post(`${this.baseUrl}/basket/merge`, request);
   }
 
-  // updateItemQuantity(
-  //   userId: string | null,
-  //   productId: string,
-  //   quantity: number
-  // ): Observable<void> {
-  //   return this._dataApiService.patch<void>(
-  //     `${this.baseUrl}/basket/${userId}/items/${productId}`,
-  //     { quantity }
-  //   );
-  // }
+  clearBackendBasket(): Observable<any> {
+    return this._dataApiService.delete<any>(`${this.baseUrl}/basket/items/`);
+  }
 
-  clearBackendBasket(userId: string | null): Observable<any> {
+  removeItemFromBackend(productId: string): Observable<any> {
     return this._dataApiService.delete<any>(
-      `${this.baseUrl}/basket/${userId}/items/`
-    );
-  }
-
-  removeItemFromBackend(
-    userId: string | null,
-    productId: string
-  ): Observable<any> {
-    return this._dataApiService.delete<any>(
-      `${this.baseUrl}/basket/${userId}/items/${productId}`
+      `${this.baseUrl}/basket/items/${productId}`
     );
   }
 }
