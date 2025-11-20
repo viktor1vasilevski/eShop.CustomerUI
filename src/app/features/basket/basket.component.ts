@@ -26,7 +26,6 @@ export class BasketComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private _basketService: BasketService,
-    private _authService: AuthService,
     private _authStorageService: AuthStorageService,
     private _basketStorageService: BasketStorageService,
     private _errorHandlerService: ErrorHandlerService,
@@ -34,9 +33,6 @@ export class BasketComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // hydrate from storage if needed
-    //this._basketService.loadBasketFromStorage();
-    debugger;
     this.subscription = this._basketStorageService.basketItems$.subscribe(
       (items: any[]) => {
         this.basketItems = items;

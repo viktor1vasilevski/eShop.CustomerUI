@@ -180,7 +180,6 @@ export class ProductDetailsComponent implements OnInit {
       commentText: this.newCommentText,
       rating: Number(this.newCommentRating),
     };
-    debugger;
     this._commentService.createComment(request).subscribe({
       next: (response: any) => {
         this.comments.unshift(response.data);

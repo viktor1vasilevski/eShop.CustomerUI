@@ -58,7 +58,6 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    debugger;
     this.isSubmitting = true;
 
     if (this.loginForm.invalid) {
@@ -76,7 +75,6 @@ export class LoginComponent {
         this._authStorageService.saveUser(res.data);
         this._authStorageService.isCusLoggedIn(true);
         const localItems = this._basketStorageService.getLocalBasketItems();
-        debugger;
         if (localItems.length > 0) {
           this.updateUserBasket(localItems);
         } else {
