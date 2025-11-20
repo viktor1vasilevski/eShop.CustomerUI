@@ -37,8 +37,7 @@ export class OrdersComponent implements OnInit {
   }
 
   loadOrderForUser() {
-    this.userId = this._authStorageService.getUserId();
-    this._orderService.getOrdersForUser(this.userId).subscribe({
+    this._orderService.getOrdersForUser().subscribe({
       next: (response: any) => {
         this.orders = response.data;
       },

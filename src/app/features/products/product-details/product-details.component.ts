@@ -123,7 +123,6 @@ export class ProductDetailsComponent implements OnInit {
       image: this.product.image,
     };
     if (this._authStorageService.isLoggedIn()) {
-      const userId = this._authStorageService.getUserId();
       const item = {
         productId: basketItem.productId,
         quantity: basketItem.quantity,
@@ -176,10 +175,8 @@ export class ProductDetailsComponent implements OnInit {
       return;
     }
 
-    let userId = this._authStorageService.getUserId();
     const request = {
       productId: this.productId,
-      userId: userId,
       commentText: this.newCommentText,
       rating: Number(this.newCommentRating),
     };

@@ -13,17 +13,11 @@ export class OrderService {
 
   constructor(
     private _dataApiService: DataService,
-    private _authService: AuthService,
     private _authStorageService: AuthStorageService
   ) {}
 
-  getOrdersForUser(userId: any): Observable<any> {
-    // const token = this._authService.getToken();
-    // let headers = new HttpHeaders();
-    // if (token) {
-    //   headers = headers.set('Authorization', `Bearer ${token}`);
-    // }
-    const url = `${this.baseUrl}/order/${userId}`;
+  getOrdersForUser(): Observable<any> {
+    const url = `${this.baseUrl}/order`;
     return this._dataApiService.getById<any>(url);
   }
 

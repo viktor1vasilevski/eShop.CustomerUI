@@ -73,7 +73,6 @@ export class BasketComponent implements OnInit, OnDestroy {
 
   removeItem(item: any): void {
     if (this._authStorageService.isLoggedIn()) {
-      const userId = this._authStorageService.getUserId();
       this._basketService.removeItemFromBackend(item.productId).subscribe({
         next: (res: any) => {
           this._notificationService.notify(res.status, res.message);
@@ -100,7 +99,6 @@ export class BasketComponent implements OnInit, OnDestroy {
     }
 
     if (this._authStorageService.isLoggedIn()) {
-      const userId = this._authStorageService.getUserId();
       const basketItem = { productId: item.productId, quantity: change };
       const request = {
         items: [basketItem],
