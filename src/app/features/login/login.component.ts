@@ -11,7 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { ErrorHandlerService } from '../../core/services/error-handler.service';
 import { NotificationService } from '../../core/services/notification.service';
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BasketService } from '../../core/services/basket.service';
 import { NotificationType } from '../../core/enums/notification-type.enum';
 import { BasketStorageService } from '../../core/services/basket.storage.service';
@@ -21,7 +21,7 @@ declare var bootstrap: any;
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
